@@ -2,7 +2,7 @@
 
 PageReel ships an **MCP server** (stdio), so any MCP-capable agent can make reels: Hermes Agent, OpenClaw, pi, Claude Code, Cursor, … Tested with Hermes Agent.
 
-Tools: `list_styles`, `start_reel`, `reel_status`, `reel_result`, `remake_reel` (asynchronous: a reel takes 2–6 minutes, `cinematic` ~35).
+Tools: `list_styles`, `start_reel`, `reel_status` (long-poll with `wait_seconds`), `reel_result`, `remake_reel` (asynchronous: a reel takes 2–6 minutes, `cinematic` ~35).
 
 ## Install
 

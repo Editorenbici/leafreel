@@ -11,7 +11,7 @@ except ImportError:                    # mcp 1.x
     from mcp.server.fastmcp import FastMCP
 from . import config, styles
 
-mcp = FastMCP("pagereel", instructions="Make narrated explainer videos from a document. Call start_reel, poll reel_status every ~30 s, then reel_result. "
+mcp = FastMCP("pagereel", instructions="Make narrated explainer videos from a document. Call start_reel, then reel_status(job_id, wait_seconds=90) until done, then reel_result. "
               "Reels take 2-6 minutes (the 'cinematic' style ~35). Only one reel runs at a time.")
 JOBS: dict[str, dict] = {}
 LOCK = threading.Lock()   # one GPU job at a time
@@ -58,10 +58,14 @@ def start_reel(document: str, style: str = "watercolor", language: str = "Englis
     return {"job_id": _start(doc, style, language, audience, camera)}
 
 @mcp.tool()
-def reel_status(job_id: str) -> dict:
-    """Progress of a reel: status (queued/running/done/error), stage, percent and a message."""
+def reel_status(job_id: str, wait_seconds: int = 0) -> dict:
+    """Progress of a reel: status (queued/running/done/error), stage, percent and a message.
+
+    wait_seconds (0-120): block up to this long and return early as soon as the job finishes. Use 60-90 to avoid polling in a tight loop."""
     j = JOBS.get(job_id)
     if not j: return {"error": "unknown job_id"}
+    end = time.time() + max(0, min(int(wait_seconds), 120))
+    while j["status"] in ("queued", "running") and time.time() < end: time.sleep(1)
     return {k: j.get(k) for k in ("status", "stage", "pct", "msg", "error", "seconds")}
 
 @mcp.tool()

@@ -32,7 +32,7 @@ Without MCP you can run the CLI: `pagereel make <doc> --style <id> --language <l
 1. Call `list_styles` if the user has not chosen a look. Suggestions: story with a character -> `watercolor`, `papercut`, `clay`, `pixel`;
    fast and information-dense -> `flat`, `chalkboard`, `kinetic` (about 2.5 min); photoreal clips with sound -> `cinematic` (about 35 min: warn first).
 2. Call `start_reel(document, style, language, audience)`. `document` can be the pasted text or a file path. Keep the returned `job_id`.
-3. Poll `reel_status(job_id)` about every 30 s until `done` (or `error`). Tell the user the stage in plain words; do not poll faster.
+3. Call `reel_status(job_id, wait_seconds=90)` repeatedly until `done` (or `error`): it blocks up to 90 s and returns early when the job ends. Tell the user the stage in plain words between calls.
 4. Call `reel_result(job_id)`. Report: the title, the video path, total time and the verification verdict. If `fact_check_changes` is not empty, mention
    that the script was corrected to match the document (show 1-2 examples). If `verification.ok` is false, say what needs review.
 5. To change something, use `remake_reel(job_id, edits)` with only the scenes that change (`id`, new `n` narration and/or `p` visual prompt): unchanged frames are cached.

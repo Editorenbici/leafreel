@@ -1,0 +1,14 @@
+# Node B (studio). Exposes ComfyUI to the Comfy SDK with a bearer token. Put it on a private network (LAN/Tailscale) only.
+[Unit]
+Description=Comfy API proxy (Comfy SDK front for local ComfyUI)
+After=network-online.target comfyui.service
+Wants=network-online.target
+
+[Service]
+EnvironmentFile=%h/.config/comfy-api-proxy.env      # COMFY_PROXY_TOKEN=...
+ExecStart=%h/.venvs/comfy-proxy/bin/comfy-api-proxy run --comfyui http://127.0.0.1:8188 --host 0.0.0.0 --port 8189 --token ${COMFY_PROXY_TOKEN}
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
