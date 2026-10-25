@@ -44,3 +44,7 @@ def test_script_generation_and_fact_check(monkeypatch):
     monkeypatch.setattr(llm, "json_call", fake)
     spec = script.generate("doc " * 100, styles.get("flat"))
     assert len(spec["scenes"]) == 10 and spec["scenes"][1]["n"] == "Corrected line." and spec["fact_check"][0]["line"] == 2 and spec["scenes"][0]["id"] == "01"
+
+def test_chromium_scratch_dir_is_short(monkeypatch, tmp_path):
+    long_tmp = tmp_path / ("deep_" * 30); long_tmp.mkdir(); monkeypatch.setenv("TMPDIR", str(long_tmp))
+    d = motion.short_tmp(); assert len(str(d)) < 40 and d.exists(); d.rmdir()

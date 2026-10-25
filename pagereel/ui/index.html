@@ -44,6 +44,11 @@ ol.lines{margin:8px 0 0;padding-left:20px;color:var(--muted);font-size:14px}.tim
 .legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted)}.legend b{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
 .hide{display:none}footer{margin-top:34px;color:var(--muted);font-size:13px;text-align:center}a{color:var(--acc2)}
 .err{color:var(--bad);font-size:14px;margin-top:8px}
+.nodes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}@media(max-width:560px){.nodes{grid-template-columns:1fr}}
+.node{border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.35}.node b{display:flex;align-items:center;gap:8px;font-size:13.5px}
+.node i{width:9px;height:9px;border-radius:50%;background:var(--bad);display:inline-block}.node.ok i{background:var(--ok);box-shadow:0 0 0 3px rgba(62,230,168,.2)}.node small{color:var(--muted);display:block}
+.hot{color:var(--acc)}.rej{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin:10px 0}.rej img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:2px solid var(--line)}
+.rej img.bad{border-color:var(--bad)}.rej img.good{border-color:var(--ok)}.rej .ar{font-size:20px;color:var(--muted)}.rj{font-size:13px;color:var(--muted)}
 .ed{display:grid;grid-template-columns:84px 1fr;gap:10px;margin:10px 0;align-items:start}.ed img{width:84px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:1px solid var(--line)}.ed textarea{min-height:46px;font-size:13px;margin-bottom:4px}.ed small{color:var(--muted)}
 </style>
 </head>
@@ -78,6 +83,7 @@ ol.lines{margin:8px 0 0;padding-left:20px;color:var(--muted);font-size:14px}.tim
 
  <section>
   <div class="card" id="run" style="position:sticky;top:16px">
+   <div class="nodes" id="nodes" aria-label="Node status"><div class="node" id="nbrain"><b><i></i>Brain node</b><small>…</small></div><div class="node" id="nstudio"><b><i></i>Studio node</b><small>…</small></div></div>
    <h2>Your reel</h2><p class="sub" id="runsub">Pick a document and a style, then press the button. Generation runs on your own GPU.</p>
    <div id="progress" class="hide">
      <div class="bar"><i id="pbar"></i></div>
@@ -89,6 +95,7 @@ ol.lines{margin:8px 0 0;padding-left:20px;color:var(--muted);font-size:14px}.tim
      <div class="row"><a class="btn" id="dl" download>⬇ Download mp4</a><span class="pill" id="tot"></span></div>
      <div class="kv" id="checks"></div>
      <div class="timeline" id="tl"></div><div class="legend" id="legend"></div>
+     <details id="qad"><summary>🔎 What the vision QA rejected and redid <span id="qan"></span></summary><div id="qalist" style="margin-top:8px"></div></details>
      <details><summary>Script (fact-checked against your document)</summary><ol class="lines" id="lines"></ol></details>
      <details id="editor"><summary>✏️ Edit &amp; remake — change a line or reshoot a scene</summary><p class="sub" style="margin:8px 0">Only what you change is regenerated; the rest comes from cache.</p><div id="edits"></div><button id="remake" type="button" class="primary" style="margin-top:10px;font-size:15px;padding:11px">Remake with my edits</button></details>
      <details><summary>What the fact-checker changed</summary><div id="facts" class="sub" style="margin-top:8px"></div></details>
@@ -138,8 +145,14 @@ function done(j){if(j.status=='error'){$('#runsub').textContent='Something went 
  const T=R.timings,sum=Object.values(T).reduce((a,b)=>a+b,0);$('#tl').innerHTML=Object.entries(T).map(([k,v])=>`<span title="${k} ${v}s" style="width:${100*v/sum}%;background:${COL[k]||'#888'}"></span>`).join('');
  $('#legend').innerHTML=Object.entries(T).map(([k,v])=>`<span><b style="background:${COL[k]||'#888'}"></b>${k} ${v}s</span>`).join('');
  $('#lines').innerHTML=j.spec.scenes.map(s=>`<li>${s.n}</li>`).join('');CUR=j;
+ const ev=R.qa_events||[];$('#qan').textContent=ev.length?`(${ev.length})`:'';$('#qalist').innerHTML=ev.length?ev.map(e=>`<div class="rj">Scene ${e.scene} · round ${e.round} · <b>${(e.reasons.length?e.reasons.join(', '):'flagged by the reviewer')}</b></div><div class="rej"><img class="bad" src="/api/jobs/${JID}/file/${e.rejected}" alt="rejected frame"><span class="ar">→</span><img class="good" src="/api/jobs/${JID}/file/${e.after}" alt="final frame"></div>`).join(''):'<span class="sub">No frame needed a retry.</span>';
  $('#edits').innerHTML=j.spec.scenes.map(s=>`<div class="ed" data-id="${s.id}"><img src="/api/jobs/${JID}/file/${s.id}.png" alt="" onerror="this.style.visibility='hidden'"><div><textarea class="n" aria-label="narration ${s.id}">${s.n.replace(/</g,'&lt;')}</textarea>${s.p?`<textarea class="p" aria-label="visual prompt ${s.id}">${s.p.replace(/</g,'&lt;')}</textarea><small>visual prompt</small>`:''}${s.v?`<textarea class="v" aria-label="motion prompt ${s.id}">${s.v.replace(/</g,'&lt;')}</textarea><small>motion prompt</small>`:''}</div></div>`).join('');
  $('#facts').innerHTML=j.spec.fact_check.length?j.spec.fact_check.map(c=>`<p><b>Line ${c.line}</b><br><s>${c.before}</s><br>${c.after}<br><i>${c.reason}</i></p>`).join(''):'Every line was supported by your document.'}
+async function nodes_(){try{const n=await (await fetch('/api/nodes')).json();
+ const b=$('#nbrain');b.className='node'+(n.brain.ok?' ok':'');b.querySelector('small').innerHTML=n.brain.ok?`${n.brain.model}<br>script · fact-check · vision QA · ${n.brain.ms} ms`:'unreachable';
+ const s=$('#nstudio');s.className='node'+(n.studio.ok?' ok':'');const g=n.studio.gpu;
+ s.querySelector('small').innerHTML=n.studio.ok?(g?`${g.name}<br>${g.util}% · <span class="${g.temp_c>=75?'hot':''}">${g.temp_c}°C</span> · ${(g.mem_used_mb/1024).toFixed(1)}/${(g.mem_total_mb/1024).toFixed(0)} GB`:'ComfyUI via Comfy SDK<br>FLUX · LTX · ACE-Step'):'unreachable'}catch(e){}}
+nodes_();setInterval(nodes_,5000);
 styles_();
 </script>
 </body>

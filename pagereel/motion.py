@@ -108,7 +108,7 @@ RENDER = r"""
 import { createRequire } from 'module'; import fs from 'fs'; import path from 'path';
 const require = createRequire(process.env.PAGEREEL_ROOT + '/package.json'); const { chromium } = require('playwright-core');
 const [,, file, outdir, fps, w, k, K] = process.argv; const FPS = +fps, W = +w, KK = +k, NK = +K;
-const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined, args: ['--no-sandbox', '--allow-file-access-from-files', '--force-color-profile=srgb'] });
+const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined, args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--allow-file-access-from-files', '--force-color-profile=srgb'] });
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } }); await page.goto('file://' + path.resolve(file)); await page.waitForFunction(() => window.seek && window.gsap);
 await page.waitForTimeout(400);
 const dur = await page.evaluate(() => window.DUR), N = Math.ceil(dur * FPS);
@@ -116,12 +116,20 @@ for (let f = KK; f < N; f += NK) { await page.evaluate((t) => window.seek(t), f 
 await browser.close(); console.log(N);
 """
 
+def short_tmp() -> Path:
+    """A private temp dir with a SHORT path (Chromium's unix sockets fail on long TMPDIR paths)."""
+    import tempfile
+    return Path(tempfile.mkdtemp(prefix="pr", dir="/tmp" if os.path.isdir("/tmp") and os.access("/tmp", os.W_OK) else None))
+
 def render(work, spec, timings, theme, fps=25, workers=8, log=print):
     """Render the HTML timeline to a silent mp4. Returns its path."""
     work = Path(work); page, total = build(spec, timings, theme)
     (work / "index.html").write_text(page); (work / "render_worker.mjs").write_text(RENDER)
     fr = work / "frames"; shutil.rmtree(fr, ignore_errors=True); fr.mkdir()
-    env = {**os.environ, "PAGEREEL_ROOT": str(ROOT), "CHROMIUM_PATH": config.CHROMIUM}
+    # Chromium puts unix sockets under TMPDIR; a path over ~100 chars (common in agent sandboxes) kills it at launch with SIGTRAP.
+    # Give it a private, SHORT temp dir (also covers a missing/unwritable HOME or TMPDIR).
+    scratch = short_tmp()
+    env = {**os.environ, "PAGEREEL_ROOT": str(ROOT), "CHROMIUM_PATH": config.CHROMIUM, "TMPDIR": str(scratch), "HOME": str(scratch)}
     t0 = time.time(); ps = [subprocess.Popen([NODE, str(work / "render_worker.mjs"), str(work / "index.html"), str(fr), str(fps), "1280", str(k), str(workers)],
                                               stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=env) for k in range(workers)]
     for p in ps:
@@ -130,4 +138,4 @@ def render(work, spec, timings, theme, fps=25, workers=8, log=print):
     log(f"{len(os.listdir(fr))} frames in {time.time()-t0:.0f}s with {workers} workers ({total:.1f}s of video)")
     silent = work / "silent.mp4"
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(fps), "-i", str(fr / "f%05d.jpg"), "-c:v", "libx264", "-crf", "17", "-pix_fmt", "yuv420p", str(silent)], check=True)
-    shutil.rmtree(fr, ignore_errors=True); return silent
+    shutil.rmtree(fr, ignore_errors=True); shutil.rmtree(scratch, ignore_errors=True); return silent

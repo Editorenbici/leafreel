@@ -22,7 +22,7 @@ def pixelate(path, width=320, colors=40):
 
 class Job:
     def __init__(self, work, progress=None):
-        self.work = Path(work); self.work.mkdir(parents=True, exist_ok=True); self.t0 = time.time(); self.timings = {}; self.cb = progress or (lambda *a: None)
+        self.work = Path(work); self.work.mkdir(parents=True, exist_ok=True); self.t0 = time.time(); self.timings = {}; self.qa_events = []; self.cb = progress or (lambda *a: None)
     def stage(self, name, pct, msg=""):
         self.cb(name, pct, msg); print(f"[{time.time()-self.t0:6.0f}s] {name}: {msg}", flush=True)
     def timed(self, name):
@@ -48,7 +48,7 @@ def _images(job, comfy, spec, style):
         for i, e in enumerate(esc):
             job.stage("visuals", 25 + 30 * i / len(esc), f"image {i+1}/{len(esc)}")
             if i != anchor: make(i, e)
-    report = {}
+    report = {}; events = job.qa_events = []; (w / "rejected").mkdir(exist_ok=True)
     for rnd in range(MAX_QA_ROUNDS):
         job.stage("qa", 55, f"vision QA round {rnd+1}")
         with job.timed("vision_qa"): res = qa.inspect_all([w / f"{e['id']}.png" for e in esc], style["name"], no_people=cine)
@@ -56,6 +56,10 @@ def _images(job, comfy, spec, style):
         if not bad or rnd == MAX_QA_ROUNDS - 1: break
         with job.timed("regeneration"):
             for e in bad:
+                r = report[e["id"]]; why = [t for t, on in (("garbled text", r.get("text_visible")), ("deformed shapes", r.get("deformed")), ("disturbing content", r.get("disturbing")),
+                                                            ("not the requested style", r.get("style_match") is False), ("people in a no-people shot", cine and r.get("n_people", 0) > 0)) if on]
+                shutil.copy(w / f"{e['id']}.png", w / "rejected" / f"{e['id']}_r{rnd}.png")
+                events.append(dict(scene=e["id"], round=rnd + 1, reasons=why, note=r.get("description", ""), rejected=f"rejected/{e['id']}_r{rnd}.png", after=f"{e['id']}.png"))
                 seeds[e["id"]] = seeds.get(e["id"], 0) + 1
                 if "p_simple" not in e or seeds[e["id"]] > 1: e["p_simple"] = qa.simplify(e["p"].replace("{character}", char), level=seeds[e["id"]])
                 job.stage("qa", 55, f"regenerating scene {e['id']} (simpler prompt)"); make(int(e["id"]) - 1, e, force=True)
@@ -112,6 +116,6 @@ def make(doc_text, style_id, work, language="English", audience="curious learner
     with job.timed("mix"): assemble.mix(job.work, silent, music, style["id"], subs, ambient, final)
     job.stage("verify", 96, "verifying the result (audio levels + vision on real frames)")
     with job.timed("verification"): report = verify.verify(final, job.work, timings)
-    total = round(time.time() - job.t0, 1); result = dict(video=str(final), spec=spec, timings=job.timings, total_s=total, verification={k: v for k, v in report.items() if k != "frames"})
+    total = round(time.time() - job.t0, 1); result = dict(video=str(final), spec=spec, timings=job.timings, qa_events=job.qa_events, total_s=total, verification={k: v for k, v in report.items() if k != "frames"})
     (job.work / "result.json").write_text(json.dumps(result, indent=1, ensure_ascii=False))
     job.stage("done", 100, f"done in {total:.0f}s; verification {'OK' if report['ok'] else 'needs review'}"); return result

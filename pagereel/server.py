@@ -1,5 +1,5 @@
 """Web app: upload a document, pick a style, watch the pipeline run, get the video. One job at a time (protects the GPU)."""
-import asyncio, io, json, queue, shutil, threading, time, uuid
+import asyncio, io, json, os, queue, shutil, threading, time, uuid
 from pathlib import Path
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
@@ -81,11 +81,38 @@ def video(jid: str):
     if not p.exists(): raise HTTPException(404)
     return FileResponse(p, media_type="video/mp4", filename=f"pagereel_{jid}.mp4")
 
-@app.get("/api/jobs/{jid}/file/{name}")
+@app.get("/api/jobs/{jid}/file/{name:path}")
 def job_file(jid: str, name: str):
     p = (config.DATA_DIR / "runs" / jid / "assets" / name).resolve()
     if not str(p).startswith(str((config.DATA_DIR / "runs" / jid).resolve())) or not p.exists(): raise HTTPException(404)
     return FileResponse(p)
+
+_NODES = {"t": 0, "v": None}
+
+def _gpu_stats():
+    """Optional GPU readout of the studio node: set GPU_STATS_SSH=user@host (or GPU_STATS_LOCAL=1) and the app shows temperature/load."""
+    import subprocess, shlex
+    q = "nvidia-smi --query-gpu=name,temperature.gpu,utilization.gpu,memory.used,memory.total,clocks.sm --format=csv,noheader,nounits"
+    if os.environ.get("GPU_STATS_SSH"): cmd = ["ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=4", os.environ["GPU_STATS_SSH"], "bash -c " + shlex.quote(q)]
+    elif os.environ.get("GPU_STATS_LOCAL"): cmd = ["bash", "-c", q]
+    else: return None
+    try:
+        out = subprocess.run(cmd, capture_output=True, text=True, timeout=8).stdout.strip().splitlines()[0].split(", ")
+        return dict(name=out[0], temp_c=int(out[1]), util=int(out[2]), mem_used_mb=int(out[3]), mem_total_mb=int(out[4]), clock_mhz=int(out[5]))
+    except Exception: return None
+
+@app.get("/api/nodes")
+def nodes():
+    """State of the two nodes (cached 4 s): LLM brain and ComfyUI studio."""
+    import httpx, time as _t
+    if _t.time() - _NODES["t"] < 4 and _NODES["v"]: return _NODES["v"]
+    out = {"brain": {"url": config.LLM_BASE_URL, "ok": False}, "studio": {"url": config.COMFY_BASE_URL, "ok": False}, "tts": config.TTS_BACKEND}
+    try:
+        t0 = _t.time(); m = httpx.get(config.LLM_BASE_URL.rstrip("/") + "/models", timeout=4).json()["data"][0]["id"]; out["brain"].update(ok=True, model=m, ms=round((_t.time() - t0) * 1000))
+    except Exception: pass
+    try: out["studio"]["ok"] = httpx.get(config.COMFY_BASE_URL.rstrip("/") + "/api/v2/jobs", timeout=4, headers={"Authorization": f"Bearer {config.COMFY_API_KEY}"}).status_code < 500
+    except Exception: pass
+    out["studio"]["gpu"] = _gpu_stats(); _NODES.update(t=_t.time(), v=out); return out
 
 @app.get("/api/health")
 def health(): return {"ok": True, "comfy": config.COMFY_BASE_URL, "llm": config.LLM_BASE_URL}
