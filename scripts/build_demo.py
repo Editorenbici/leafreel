@@ -4,10 +4,19 @@ Every segment lasts exactly as long as the narration lines it illustrates, so pi
 Usage: build_demo.py REC_DIR NARRATION_DIR MUSIC.mp3 OUT.mp4   (REC_DIR has the .webm + marks.json; NARRATION_DIR has narration.wav + narration_timings.json)"""
 import json, subprocess, sys, glob
 from pathlib import Path
-rec, nar, music, out = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3], Path(sys.argv[4])
+rec, nar, music, out = Path(sys.argv[1]).resolve(), Path(sys.argv[2]).resolve(), str(Path(sys.argv[3]).resolve()), Path(sys.argv[4]).resolve()
 root = Path(__file__).resolve().parent.parent; tmp = out.parent / "demo_tmp"; tmp.mkdir(exist_ok=True)
-webm = glob.glob(str(rec / "*.webm"))[0]; M = json.loads((rec / "marks.json").read_text()); T = json.loads((nar / "narration_timings.json").read_text())
+webm = (glob.glob(str(rec / "rec.mp4")) or glob.glob(str(rec / "*.webm")))[0]; M = json.loads((rec / "marks.json").read_text()); T = json.loads((nar / "narration_timings.json").read_text())
 FPS, PAD = 25, 0.55
+# The browser's screencast clock and the script's Date.now() do not advance at the same rate (and not uniformly), so marks are re-anchored on what the
+# recording itself shows: the moment the black <video> player of the finished reel first appears (after the card-preview hovers at the start).
+import numpy as np
+rec_len = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", webm], text=True))
+raw = subprocess.run(["ffmpeg", "-loglevel", "error", "-i", webm, "-vf", "fps=1,scale=128:72", "-f", "rawvideo", "-pix_fmt", "gray", "-"], capture_output=True).stdout
+g = np.frombuffer(raw, dtype=np.uint8).reshape(-1, 72, 128); dark = (g < 25).mean(axis=(1, 2))
+t_done = next(i for i in range(int(M["running"] * 1.1) + 30, len(dark)) if dark[i] > 0.008)
+k1 = t_done / M["done"]; k2 = (rec_len - t_done) / (M["remade"] + 2.8 - M["done"])
+M = {k: (v * k1 if v <= M["done"] else t_done + (v - M["done"]) * k2) for k, v in M.items()}; print(f"anchors: done at {t_done}s (x{k1:.3f} before, x{k2:.3f} after)")
 def sh(*a): subprocess.run(a, check=True)
 def span(i, j): return T[i][0], T[j][1] + PAD                       # narration lines i..j (0-based) -> [start, end]
 LAYOUT = [  # (kind, first line, last line, source interval in the recording or file)

@@ -51,6 +51,18 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 Examples (same input, `examples/volcanoes.md`): `examples/outputs/`.
 
+## Measured results
+
+One ~52 s reel per style from the same 400-word document, on an RTX 3090 (24 GB) that was **thermally throttled** during all runs (details in [docs/BENCHMARKS.md](docs/BENCHMARKS.md)):
+
+| Style family | End-to-end | Where the time goes |
+|---|---|---|
+| Code-rendered (`flat`, `chalkboard`, `kinetic`) | **2.2–2.7 min** | ~50 s script + fact-check, ~30 s voice, ~10 s render (1,200 frames, 8 parallel workers), music, verification |
+| ComfyUI images (`papercut`, `pixel`, `watercolor`, `clay`) | **4.6–5.7 min** | 12 frames ≈ 80–120 s (character-locked), vision QA 35–90 s incl. regenerations |
+| `cinematic` (FLUX frames → 10 LTX-2.5 clips with audio) | **35 min** | LTX-2.5 22B ≈ 140 s per 5-second clip (with a 40 s cooldown between clips) |
+
+All eight reels passed the automatic checks (−16 LUFS, no black frames or long silences, vision review of 8 real frames).
+
 ## Quick start
 
 ```bash
