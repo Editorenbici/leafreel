@@ -1,0 +1,34 @@
+<!doctype html><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0}html,body{width:1280px;height:720px;overflow:hidden;background:#0d1020;color:#eef1ff;font-family:'DejaVu Sans','Noto Sans',sans-serif}
+body{background:radial-gradient(900px 500px at 85% 0%,rgba(124,140,255,.30),transparent),radial-gradient(800px 500px at 0% 100%,rgba(255,179,71,.22),transparent),#0d1020}
+h1{position:absolute;top:34px;left:0;right:0;text-align:center;font-size:44px;letter-spacing:-1px}h1 em{font-style:normal;color:#ffb347}
+.node{position:absolute;top:150px;width:480px;height:330px;border-radius:26px;border:2px solid #2a3158;background:#151a30;padding:26px 30px}
+.node h2{font-size:30px;margin-bottom:6px}.node .sub{color:#9aa3cf;font-size:20px;margin-bottom:14px}.node li{list-style:none;font-size:21px;line-height:1.55;color:#dfe3ff}.node li:before{content:"▸ ";color:#ffb347}
+#A{left:60px;border-color:#7c8cff}#B{right:60px;border-color:#ffb347}.tag{position:absolute;top:-16px;left:26px;background:#0d1020;padding:0 12px;font-size:18px;font-weight:700;letter-spacing:2px}#A .tag{color:#7c8cff}#B .tag{color:#ffb347}
+.arrow{position:absolute;left:560px;width:160px;height:3px;background:linear-gradient(90deg,#7c8cff,#ffb347);transform-origin:left;border-radius:2px}.arrow:after{content:"";position:absolute;right:-2px;top:-7px;border-left:16px solid #ffb347;border-top:8px solid transparent;border-bottom:8px solid transparent}
+.lab{position:absolute;left:566px;width:150px;text-align:center;font-size:17px;color:#cfd5ff}
+.stats{position:absolute;bottom:60px;left:0;right:0;display:flex;justify-content:center;gap:26px}.stat{background:#151a30;border:1px solid #2a3158;border-radius:18px;padding:14px 26px;text-align:center}.stat b{display:block;font-size:34px;color:#ffb347}.stat span{font-size:17px;color:#9aa3cf}
+.ow{position:absolute;bottom:18px;left:0;right:0;text-align:center;color:#3ee6a8;font-size:22px;font-weight:700}
+</style><body>
+<h1>Two nodes. <em>Zero cloud.</em></h1>
+<div class="node" id="A"><div class="tag">NODE A · BRAIN</div><h2>DGX Spark / GX10</h2><div class="sub">Qwen3.8 Flash Next · vision</div><ul><li class="a">writes &amp; fact-checks the script</li><li class="a">looks at every frame (vision QA)</li><li class="a">PageReel app · ffmpeg · Chromium</li><li class="a">MCP server for agents</li></ul></div>
+<div class="node" id="B"><div class="tag">NODE B · STUDIO</div><h2>RTX 3090 · 24 GB</h2><div class="sub">ComfyUI behind the Comfy SDK</div><ul><li class="b">FLUX.2 klein · character lock</li><li class="b">LTX-2.5 · clips with sound</li><li class="b">ACE-Step · music</li><li class="b">Qwen3-TTS · designed voices</li></ul></div>
+<div class="arrow" id="r1" style="top:230px"></div><div class="lab" id="l1" style="top:196px">prompts</div>
+<div class="arrow" id="r2" style="top:300px"></div><div class="lab" id="l2" style="top:266px">frames · clips</div>
+<div class="arrow" id="r3" style="top:370px"></div><div class="lab" id="l3" style="top:336px">music · voice</div>
+<div class="stats"><div class="stat" id="s1"><b>2.5 min</b><span>code-rendered reel</span></div><div class="stat" id="s2"><b>5 min</b><span>image-style reel</span></div><div class="stat" id="s3"><b>35 min</b><span>cinematic LTX reel</span></div><div class="stat" id="s4"><b>0</b><span>cloud calls</span></div></div>
+<div class="ow" id="ow">100% open-weight models · Apache-2.0 code</div>
+<script>
+// tiny deterministic tween engine (no dependencies): seek(t) sets every style from the time alone
+const ease=p=>1-Math.pow(1-p,3), clamp=x=>Math.max(0,Math.min(1,x));
+const T=[]; const add=(sel,t0,d,o)=>document.querySelectorAll(sel).forEach((el,i)=>T.push({el,t0:t0+(o.stagger||0)*i,d,o}));
+add('h1',0.2,0.6,{op:[0,1],y:[-20,0]});
+add('#A',0.8,0.8,{op:[0,1],x:[-80,0]}); add('.a',1.3,0.4,{op:[0,1],x:[-20,0],stagger:0.35});
+add('#B',2.4,0.8,{op:[0,1],x:[80,0]}); add('.b',2.9,0.4,{op:[0,1],x:[20,0],stagger:0.35});
+['1','2','3'].forEach((k,i)=>{add('#r'+k,4.6+i*0.5,0.6,{op:[0,1],sx:[0,1]}); add('#l'+k,4.9+i*0.5,0.4,{op:[0,1]})});
+add('.stat',7.0,0.5,{op:[0,1],y:[30,0],stagger:0.45}); add('#ow',9.4,0.6,{op:[0,1]});
+function seek(t){for(const {el,t0,d,o} of T){const p=ease(clamp((t-t0)/d)); let tr=''; 
+  if(o.op) el.style.opacity=o.op[0]+(o.op[1]-o.op[0])*p; if(o.x) tr+=`translateX(${o.x[0]+(o.x[1]-o.x[0])*p}px) `; if(o.y) tr+=`translateY(${o.y[0]+(o.y[1]-o.y[0])*p}px) `; if(o.sx) tr+=`scaleX(${o.sx[0]+(o.sx[1]-o.sx[0])*p}) `; el.style.transform=tr;}
+  if(t>10.2) document.querySelectorAll('.arrow').forEach(a=>a.style.opacity=0.65+0.35*Math.cos((t-10.2)*Math.PI*2.4));}
+window.DUR=14; window.seek=seek; window.gsap=true; seek(0);
+</script></body>
