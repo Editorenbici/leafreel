@@ -32,7 +32,7 @@ page = f'''<!doctype html><meta charset="utf-8"><style>
 *{{box-sizing:border-box;margin:0}}html,body{{width:1280px;height:720px;overflow:hidden;background:#0d1020;font-family:'DejaVu Sans Mono','Noto Sans Mono',monospace}}
 body{{background:radial-gradient(900px 500px at 85% 0%,rgba(124,140,255,.25),transparent),radial-gradient(800px 500px at 0% 100%,rgba(255,179,71,.18),transparent),#0d1020}}
 .win{{position:absolute;left:60px;top:46px;width:1160px;height:628px;border-radius:16px;background:#0b0e1c;border:1px solid #2a3158;box-shadow:0 30px 80px rgba(0,0,0,.5);overflow:hidden}}
-.bar{{height:44px;background:#151a30;display:flex;align-items:center;gap:8px;padding:0 16px;color:#9aa3cf;font-size:16px}}.dot{{width:12px;height:12px;border-radius:50%}}
+.bar{{position:relative;z-index:5;height:44px;background:#151a30;display:flex;align-items:center;gap:8px;padding:0 16px;color:#9aa3cf;font-size:16px}}.dot{{width:12px;height:12px;border-radius:50%}}
 .body{{padding:20px 26px;font-size:19px;line-height:1.5;color:#dfe3ff;white-space:pre-wrap;word-break:break-word}}
 .you{{color:#7c8cff}}.tool{{color:#ffb347}}.out{{color:#8be9c1;padding-left:26px}}.hermes{{color:#eef1ff}}.lab{{font-weight:700;margin-right:10px}}
 .cur{{display:inline-block;width:10px;height:20px;background:#ffb347;vertical-align:-3px}}

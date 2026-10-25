@@ -1,12 +1,11 @@
-Documents are everywhere. Videos are what people actually watch.
-Closed apps made video effortless. So we built an open one: PageReel.
-Drop a page, or a PDF. Pick a look. Press one button.
-Behind it, a pipeline runs entirely on open weights, through ComfyUI and the Comfy SDK.
-A local vision model writes the script, and fact-checks it against your document.
-A designed voice narrates. FLUX dot 2 draws every frame, with the character locked from scene to scene.
-ACE-Step composes the music, and LTX 2.5 can turn frames into clips with ambient sound.
-Then PageReel inspects its own work. A vision model looks at every frame. Garbled text, or a deformed hand? It rewrites the prompt and tries again.
-Same page, completely different films: watercolor, cut paper, pixel game, claymation, chalkboard, kinetic type, and cinematic.
+Every school, every company, every team has documents. Almost nobody watches them.
+PageReel turns a page into a reel, in any visual style you choose.
+Drop a document. Pick a look. Press one button.
+It runs on two machines you own: a brain that writes, fact-checks, and watches every frame, and a studio that draws, animates, composes, and speaks. All open weights. Zero cloud.
+Here it is, working for real. The script is checked against your document. The voice is designed, not cloned. FLUX draws every frame with the character locked, and ACE-Step writes the music.
+And it does not trust itself. A vision model inspects every frame. Garbled text, or a deformed hand? It rewrites the prompt and tries again, and every correction is shown.
+Same page, completely different films.
+It speaks your language too.
+Or just ask your agent. Hermes, OpenClaw, pi, anything that speaks MCP can take a PDF and bring back a reel.
 Edit a line, or reshoot a scene, and only what changed is regenerated.
-Add your own style with one small JSON file.
-PageReel. Open weights, open code, one GPU.
+PageReel. Open weights. Open code. Two nodes, one command to check them: pagereel doctor.
