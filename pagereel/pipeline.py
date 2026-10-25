@@ -95,6 +95,7 @@ def make(doc_text, style_id, work, language="English", audience="curious learner
         images = _images(job, comfy, spec, style)
         if style["engine"] == "cinematic": sources = _clips(job, comfy, spec, style)
         else: sources = images
+        (job.work / "spec.json").write_text(json.dumps(spec, indent=1, ensure_ascii=False))  # keep simplified prompts so remakes reuse the fixes
         job.stage("assemble", 82, "cutting scenes together")
         with job.timed("assemble"): silent, ambient = assemble.scenes_to_video(job.work, sources, timings, style["transition"], style.get("camera", "drift"), ambient=style["engine"] == "cinematic")
         assemble.write_srt(job.work, timings); subs = True
