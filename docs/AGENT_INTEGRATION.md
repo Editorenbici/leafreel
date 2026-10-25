@@ -47,3 +47,11 @@ Agents that cannot use MCP can call the CLI (`pagereel make …`) or the HTTP AP
 
 The web UI is for people at a desk; the agent front-end lets a teacher send a PDF from their phone and get the reel back in the same chat,
 with the agent explaining what was fact-corrected. The generation still runs on your own two nodes with open weights.
+
+## Notes from testing with a real Hermes Agent
+
+* **MCP servers stay alive between runs.** Hermes keeps the `pagereel-mcp` process running; after you update PageReel, stop it (or restart Hermes) so the new code loads.
+* **Use `wait_seconds`.** `reel_status(job_id, wait_seconds=40)` blocks until the job finishes or 40 s pass, so the agent does not spend turns polling.
+* **Sandboxed environments.** Hermes starts tools with a long `TMPDIR`, which makes headless Chromium crash at launch (`SIGTRAP`). The code-rendered styles now give Chromium a short private temp dir, so this is handled for you.
+* **Logs.** Tool calls and job errors are written to `<PAGEREEL_DATA>/mcp.log` (stdout is the MCP protocol channel and is never used for logging).
+* **Restrict the agent.** For a safe demo, disable the shell/file toolsets and leave only the PageReel tools: `hermes tools disable terminal file code_execution browser web`.

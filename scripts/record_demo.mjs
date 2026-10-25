@@ -23,6 +23,7 @@ await page.waitForSelector('#result:not(.hide)', { timeout: 25 * 60 * 1000 }); m
 await page.evaluate(() => document.querySelector('#player').scrollIntoView({ behavior: 'smooth', block: 'center' })); await sleep(800);
 await page.evaluate(() => { const v = document.querySelector('#player'); v.muted = true; v.play(); }); await sleep(5000); mark('played');
 await page.evaluate(() => { const v = document.querySelector('#player'); v.pause(); });
+if (await page.$('#qad')) { await page.click('#qad summary'); await sleep(4500); mark('qa'); }
 await page.click('#facts'.replace('#facts', 'details:has(#facts) summary')); await sleep(2500); mark('facts');
 await page.click('details#editor summary'); await sleep(1500);
 const first = await page.$('.ed .n'); await first.click({ clickCount: 3 }); await page.keyboard.type('Meet Mia, a curious explorer who wants to understand what is happening deep inside our planet.', { delay: 25 }); await sleep(800); mark('edited');
