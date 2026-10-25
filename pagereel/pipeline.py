@@ -62,20 +62,25 @@ def _images(job, comfy, spec, style):
     (job.work / "qa_images.json").write_text(json.dumps({"remaining": [e["id"] for e, (b, _) in zip(esc, res) if b], "report": report}, indent=1, ensure_ascii=False))
     return [w / f"{e['id']}.png" for e in esc]
 
-def _clips(job, comfy, spec, style):
+CAMERA_MOVES = {
+    "auto": "", "push-in": "slow dolly push-in toward the subject", "pull-back": "slow pull-back revealing the scene", "pan": "slow smooth lateral pan",
+    "orbit": "gentle orbit around the subject", "crane-up": "slow crane move rising upward", "handheld": "subtle handheld camera with natural micro-movement", "static": "locked-off static camera, only the elements move",
+}
+
+def _clips(job, comfy, spec, style, camera="auto"):
     c = job.work / "clips"; c.mkdir(exist_ok=True); out = []
     for i, e in enumerate(spec["scenes"]):
         job.stage("visuals", 55 + 25 * i / len(spec["scenes"]), f"video clip {i+1}/{len(spec['scenes'])} (LTX-2.5)")
-        dest = c / f"{e['id']}.mp4"; src = job.work / "assets" / f"{e['id']}.png"; key = (e.get("v_simple") or e["v"]) + "|" + (json.loads(Path(str(src) + ".json").read_text())["key"] if Path(str(src) + ".json").exists() else "")
+        dest = c / f"{e['id']}.mp4"; src = job.work / "assets" / f"{e['id']}.png"; move = CAMERA_MOVES.get(camera, ""); vprompt = (e.get("v_simple") or e["v"]) + (f", camera: {move}" if move else ""); key = vprompt + "|" + (json.loads(Path(str(src) + ".json").read_text())["key"] if Path(str(src) + ".json").exists() else "")
         if not _cached(dest, key):
-            with job.timed("video_clips"): comfy.video(job.work / "assets" / f"{e['id']}.png", (e.get("v_simple") or e["v"]) + ", realistic documentary style, natural light, no people", dest, seed=3000 + i)
+            with job.timed("video_clips"): comfy.video(job.work / "assets" / f"{e['id']}.png", vprompt + ", realistic documentary style, natural light, no people", dest, seed=3000 + i)
             _remember(dest, key)
         out.append(dest)
         cool = float(os.environ.get("GPU_COOLDOWN", "0"))  # optional pause between clips to let the GPU cool (long LTX runs)
         if cool and i < len(spec["scenes"]) - 1: job.stage("visuals", 55 + 25 * (i + 1) / len(spec["scenes"]), f"cooling down {cool:.0f}s"); time.sleep(cool)
     return out
 
-def make(doc_text, style_id, work, language="English", audience="curious learners aged 8-12", progress=None, spec=None):
+def make(doc_text, style_id, work, language="English", audience="curious learners aged 8-12", progress=None, spec=None, camera="auto"):
     """Run the whole pipeline. Returns a dict with paths, spec, timings and the verification report."""
     style = styles.get(style_id); job = Job(work, progress); comfy = Comfy_()
     if spec is None:
@@ -93,7 +98,7 @@ def make(doc_text, style_id, work, language="English", audience="curious learner
         subs = False
     else:
         images = _images(job, comfy, spec, style)
-        if style["engine"] == "cinematic": sources = _clips(job, comfy, spec, style)
+        if style["engine"] == "cinematic": sources = _clips(job, comfy, spec, style, camera)
         else: sources = images
         (job.work / "spec.json").write_text(json.dumps(spec, indent=1, ensure_ascii=False))  # keep simplified prompts so remakes reuse the fixes
         job.stage("assemble", 82, "cutting scenes together")

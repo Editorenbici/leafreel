@@ -22,7 +22,7 @@ def _worker():
         jid = Q.get(); job = JOBS[jid]; job["status"] = "running"; job["started"] = time.time()
         def progress(stage, pct, msg, job=job): job["events"].append(dict(t=round(time.time() - job["started"], 1), stage=stage, pct=pct, msg=msg)); job["stage"], job["pct"], job["msg"] = stage, pct, msg
         try:
-            r = pipeline.make(job.get("text", ""), job["style"], config.DATA_DIR / "runs" / jid, job["language"], job["audience"], progress, spec=job.get("spec_in"))
+            r = pipeline.make(job.get("text", ""), job["style"], config.DATA_DIR / "runs" / jid, job["language"], job["audience"], progress, spec=job.get("spec_in"), camera=job.get("camera", "auto"))
             job.update(status="done", result={k: v for k, v in r.items() if k != "spec"}, spec=r["spec"])
         except Exception as e:
             job.update(status="error", error=repr(e)); progress("error", 100, repr(e))
@@ -32,11 +32,11 @@ threading.Thread(target=_worker, daemon=True).start()
 def api_styles(): return list(styles.load_all().values())
 
 @app.post("/api/jobs")
-async def create_job(style: str = Form(...), language: str = Form("English"), audience: str = Form("curious learners aged 8-12"), text: str = Form(""), file: UploadFile | None = File(None)):
+async def create_job(style: str = Form(...), language: str = Form("English"), audience: str = Form("curious learners aged 8-12"), camera: str = Form("auto"), text: str = Form(""), file: UploadFile | None = File(None)):
     if file is not None and file.filename: text = _doc_text(file.filename, await file.read())
     if len(text.strip()) < 200: raise HTTPException(400, "Please provide at least a few sentences of text (200+ characters).")
     styles.get(style); jid = uuid.uuid4().hex[:10]
-    JOBS[jid] = dict(id=jid, style=style, language=language, audience=audience, text=text, status="queued", events=[], stage="queued", pct=0, msg=f"{Q.qsize()} ahead in the queue", created=time.time())
+    JOBS[jid] = dict(id=jid, style=style, language=language, audience=audience, camera=camera, text=text, status="queued", events=[], stage="queued", pct=0, msg=f"{Q.qsize()} ahead in the queue", created=time.time())
     Q.put(jid); return {"id": jid}
 
 def _public(j): return {k: v for k, v in j.items() if k not in ("text", "spec_in")}
@@ -54,7 +54,7 @@ async def remake(jid: str, edits: dict):
         sc.pop("p_simple", None) if e.get("p") else None; sc.pop("v_simple", None) if e.get("v") else None
     new = uuid.uuid4().hex[:10]; a, b = config.DATA_DIR / "runs" / jid, config.DATA_DIR / "runs" / new
     shutil.copytree(a, b, ignore=shutil.ignore_patterns("video.mp4", "result.json", "verification.json", "qa_frames", "frames"))
-    JOBS[new] = dict(id=new, style=src["style"], language=src["language"], audience=src["audience"], spec_in=spec, status="queued", events=[], stage="queued", pct=0,
+    JOBS[new] = dict(id=new, style=src["style"], language=src["language"], audience=src["audience"], camera=edits.get("camera", src.get("camera", "auto")), spec_in=spec, status="queued", events=[], stage="queued", pct=0,
                      msg=f"{Q.qsize()} ahead in the queue", created=time.time(), parent=jid)
     Q.put(new); return {"id": new}
 

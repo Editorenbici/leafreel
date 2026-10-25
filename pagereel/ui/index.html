@@ -71,6 +71,7 @@ ol.lines{margin:8px 0 0;padding-left:20px;color:var(--muted);font-size:14px}.tim
    <h2><span class="step">3</span>Audience &amp; language</h2>
    <div class="two" style="margin-top:10px"><div><label for="lang">Narration language</label><select id="lang"><option>English</option><option>Spanish</option><option>Portuguese</option><option>French</option><option>German</option><option>Italian</option><option>Japanese</option><option>Chinese</option><option>Korean</option><option>Russian</option></select></div>
    <div><label for="aud">Who is it for?</label><input id="aud" type="text" value="curious learners aged 8-12"></div></div>
+   <div id="camrow" class="hide" style="margin-top:12px"><label for="cam">Camera move (cinematic clips)</label><select id="cam"><option value="auto">Auto — let the script decide</option><option value="push-in">Slow push-in</option><option value="pull-back">Pull-back reveal</option><option value="pan">Smooth pan</option><option value="orbit">Orbit</option><option value="crane-up">Crane up</option><option value="handheld">Handheld</option><option value="static">Static camera</option></select></div>
    <div style="margin-top:16px"><button class="primary" id="go">✨ Make my reel</button><div class="err" id="err"></div></div>
   </div>
  </section>
@@ -106,7 +107,7 @@ async function styles_(){const r=await fetch('/api/styles');const list=await r.j
   b.innerHTML=`<div class="pv" style="background-image:url(/examples/previews/${s.id}.jpg)"><span class="tag">${ENGINE[s.engine]||s.engine}</span></div><div class="nm">${s.name}</div><div class="bl">${s.blurb||''}</div>`;
   b.onmouseenter=()=>{const pv=b.querySelector('.pv');if(pv.querySelector('video'))return;const v=document.createElement('video');v.src=`/examples/previews/${s.id}.mp4`;v.muted=true;v.loop=true;v.autoplay=true;v.playsInline=true;v.onerror=()=>v.remove();pv.prepend(v)};
   b.onmouseleave=()=>{b.querySelector('video')?.remove()};
-  b.onclick=()=>{document.querySelectorAll('.style').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');style=s.id};box.appendChild(b);if(i==0)b.click()})}
+  b.onclick=()=>{document.querySelectorAll('.style').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');style=s.id;$('#camrow').classList.toggle('hide',s.engine!=='cinematic')};box.appendChild(b);if(i==0)b.click()})}
 document.querySelectorAll('.sample').forEach(b=>b.onclick=async()=>{$('#text').value=await (await fetch(`/examples/${b.dataset.f}.md`)).text()});
 $('#file').onchange=e=>{const f=e.target.files[0];if(f){$('#drop').textContent='📄 '+f.name;$('#drop').classList.add('on')}};
 function stageList(){const ul=$('#stages');ul.innerHTML='';STAGES.forEach(([k,t])=>{const li=document.createElement('li');li.id='st_'+k;li.innerHTML=`<span class="dot"></span><div><div>${t}</div><div class="m"></div></div><span class="t"></span>`;ul.appendChild(li)})}
@@ -120,13 +121,13 @@ function showStrip(){const s=$('#strip');s.innerHTML='';for(let i=1;i<=12;i++){c
 function watch(id){JID=id;$('#result').classList.add('hide');$('#progress').classList.remove('hide');$('#runsub').textContent='Running on your GPU… this takes a few minutes. Frames appear as they are made.';stageList();showStrip();
  const es=new EventSource(`/api/jobs/${JID}/events`);es.onmessage=e=>setStage(JSON.parse(e.data));
  es.addEventListener('end',e=>{es.close();clearInterval(pollStrip);$('#go').disabled=false;done(JSON.parse(e.data))})}
-$('#go').onclick=async()=>{$('#err').textContent='';const fd=new FormData();fd.append('style',style);fd.append('language',$('#lang').value);fd.append('audience',$('#aud').value);
+$('#go').onclick=async()=>{$('#err').textContent='';const fd=new FormData();fd.append('style',style);fd.append('language',$('#lang').value);fd.append('audience',$('#aud').value);fd.append('camera',$('#cam').value);
  const f=$('#file').files[0];if(f)fd.append('file',f);fd.append('text',$('#text').value);
  $('#go').disabled=true;const r=await fetch('/api/jobs',{method:'POST',body:fd});if(!r.ok){$('#err').textContent=(await r.json()).detail||'Error';$('#go').disabled=false;return}
  watch((await r.json()).id)};
 let CUR=null;
 $('#remake').onclick=async()=>{const scenes=[...document.querySelectorAll('.ed')].map(d=>({id:d.dataset.id,n:d.querySelector('.n').value,p:d.querySelector('.p')?.value,v:d.querySelector('.v')?.value}));
- $('#remake').disabled=true;const r=await fetch(`/api/jobs/${JID}/remake`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenes})});$('#remake').disabled=false;
+ $('#remake').disabled=true;const r=await fetch(`/api/jobs/${JID}/remake`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenes,camera:$('#cam').value})});$('#remake').disabled=false;
  if(!r.ok){alert('Could not remake');return}watch((await r.json()).id)};
 const COL={script:'#7c8cff',narration:'#ff6b8a',images:'#ffb347',video_clips:'#ff8a3d',render:'#ffb347',vision_qa:'#3ee6a8',regeneration:'#2bb5ff',assemble:'#a78bfa',music:'#f472b6',mix:'#94a3b8',verification:'#34d399'};
 function done(j){if(j.status=='error'){$('#runsub').textContent='Something went wrong: '+j.error;return}
