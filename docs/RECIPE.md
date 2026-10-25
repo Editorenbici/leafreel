@@ -50,7 +50,7 @@ pagereel serve
 
 ## Operating notes (learned the hard way)
 
-* **One GPU job at a time.** A long LTX run kept an RTX 3090 at 100 % for half an hour; the card was thermally limited and once fell off the bus under sustained load. PageReel serializes jobs and has `GPU_COOLDOWN=<seconds>` to pause between clips. With 40 s pauses, a 35-minute cinematic reel ran clean.
+* **One GPU job at a time.** A long LTX run kept an RTX 3090 at 100 % for half an hour; the card was thermally limited and fell off the bus twice under sustained load. PageReel serializes jobs and has `GPU_COOLDOWN=<seconds>` to pause between clips. With 40 s pauses, a 35-minute cinematic reel ran clean.
 * **Watch temperatures, not just utilization.** `nvidia-smi -q -d PERFORMANCE` shows *SW/HW Thermal Slowdown*; memory/hot-spot temperature is not exposed on every board.
 * **Remote login shells vary** (bash, fish, zsh). PageReel hands remote commands to `bash -c`, so they survive.
 * **Agents doing maintenance.** If an agent needs occasional root on a node (restart ComfyUI, change the GPU power limit), prefer *scoped, expiring* sudo grants over a permanent NOPASSWD rule. [`nopasswd-sudo`](https://github.com/sudoingX/nopasswd-sudo) (Apache-2.0) does exactly that: `sudo nopasswd-sudo on 1 --allow systemctl,nvidia-smi`. It is single-machine and optional, and not a dependency of PageReel.
