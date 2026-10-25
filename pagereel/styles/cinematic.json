@@ -1,0 +1,14 @@
+{
+ "id": "cinematic",
+ "name": "Cinematic documentary (LTX-2.5)",
+ "engine": "cinematic",
+ "blurb": "Photoreal establishing shots turned into video clips with ambient sound.",
+ "image_style": "cinematic documentary photograph, natural soft light, high quality, no people, no text",
+ "transition": "fade",
+ "music": {
+  "tags": "cinematic ambient, soft strings, gentle piano, wide and calm documentary score, instrumental",
+  "bpm": 70
+ },
+ "voice": "deep calm male documentary narrator, enveloping tone",
+ "order": 5
+}

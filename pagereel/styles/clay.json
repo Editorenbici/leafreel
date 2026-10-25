@@ -1,0 +1,16 @@
+{
+ "id": "clay",
+ "name": "Claymation",
+ "engine": "image",
+ "blurb": "Stop-motion look: everything modelled in colored clay.",
+ "image_style": "Aardman-style stop-motion animation, EVERYTHING made of colored modeling clay: hand-sculpted matte surfaces with visible fingerprints, round edges and bead eyes, miniature cardboard-and-clay set, warm studio light, no text or letters",
+ "transition": "circleopen",
+ "camera": "drift",
+ "character": true,
+ "music": {
+  "tags": "quirky stop motion toy piano, bouncy pizzicato bass, light xylophone, warm and funny, instrumental",
+  "bpm": 104
+ },
+ "voice": "friendly playful male cartoon narrator, lively tone",
+ "order": 4
+}

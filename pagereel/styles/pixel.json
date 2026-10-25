@@ -1,0 +1,17 @@
+{
+ "id": "pixel",
+ "name": "16-bit pixel game",
+ "engine": "image",
+ "blurb": "Retro adventure scenes, true pixel grid, stepped camera pans.",
+ "image_style": "16-bit retro video game pixel art, adventure scene with limited vibrant palette, crisp simple sprites, no text or letters",
+ "transition": "pixelize",
+ "camera": "step",
+ "pixelate": true,
+ "character": true,
+ "music": {
+  "tags": "8-bit chiptune adventure, square wave lead, bouncy bassline, retro video game level music, instrumental",
+  "bpm": 125
+ },
+ "voice": "energetic young male video-game presenter for kids, enthusiastic tone",
+ "order": 3
+}

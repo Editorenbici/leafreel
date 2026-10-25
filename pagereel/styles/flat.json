@@ -1,0 +1,13 @@
+{
+ "id": "flat",
+ "name": "Flat motion graphics",
+ "engine": "motion",
+ "theme": "flat",
+ "blurb": "Code-rendered vector cards, steps and charts (HTML + GSAP).",
+ "music": {
+  "tags": "upbeat playful ukulele, marimba and pizzicato strings, light claps, cheerful educational music, instrumental",
+  "bpm": 110
+ },
+ "voice": "young dynamic female presenter of an educational channel, clear and positive tone",
+ "order": 6
+}

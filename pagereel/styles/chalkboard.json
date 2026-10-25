@@ -1,0 +1,13 @@
+{
+ "id": "chalkboard",
+ "name": "Chalkboard",
+ "engine": "motion",
+ "theme": "chalkboard",
+ "blurb": "Hand-drawn chalk look with wobbly edges, rendered from code.",
+ "music": {
+  "tags": "gentle acoustic guitar, soft brushed drums, warm upright bass, calm thoughtful classroom mood, instrumental",
+  "bpm": 88
+ },
+ "voice": "calm close male teacher, explanatory and warm tone",
+ "order": 7
+}

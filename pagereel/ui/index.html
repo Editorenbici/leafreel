@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PageReel — drop a page, get a reel</title>
+<style>
+:root{--bg:#0d1020;--panel:#151a30;--panel2:#1b2140;--line:#2a3158;--fg:#eef1ff;--muted:#9aa3cf;--acc:#ffb347;--acc2:#7c8cff;--ok:#3ee6a8;--bad:#ff6b8a;--r:16px}
+@media (prefers-color-scheme:light){:root{--bg:#f4f6ff;--panel:#fff;--panel2:#f0f2ff;--line:#d9ddf5;--fg:#16193a;--muted:#5d648f;--acc:#e8820c;--acc2:#4f5fe0;--ok:#0f9d6b;--bad:#d6335a}}
+*{box-sizing:border-box}html,body{margin:0}body{background:radial-gradient(1200px 600px at 80% -10%,rgba(124,140,255,.18),transparent),radial-gradient(900px 500px at -10% 10%,rgba(255,179,71,.12),transparent),var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 80px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:26px}
+.logo{display:flex;align-items:center;gap:12px;font-weight:800;font-size:26px;letter-spacing:-.5px}.logo i{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--acc),#ff6b8a);font-style:normal}
+.badges{display:flex;gap:8px;flex-wrap:wrap}.badge{font-size:12px;padding:5px 11px;border:1px solid var(--line);border-radius:99px;color:var(--muted);background:var(--panel)}
+h1{font-size:clamp(30px,5vw,50px);line-height:1.08;letter-spacing:-1.2px;margin:6px 0 10px}h1 em{font-style:normal;background:linear-gradient(90deg,var(--acc),#ff6b8a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{color:var(--muted);max-width:760px;margin:0 0 28px;font-size:18px}
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:22px}@media(max-width:940px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px}.card h2{margin:0 0 4px;font-size:18px}.card .sub{color:var(--muted);font-size:14px;margin:0 0 14px}
+.step{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--acc2);color:#fff;font-size:13px;font-weight:700;margin-right:8px}
+textarea{width:100%;min-height:190px;resize:vertical;background:var(--panel2);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:14.5px}
+textarea:focus,select:focus,input:focus{outline:2px solid var(--acc2);outline-offset:1px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+button,.btn{font:inherit;cursor:pointer;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:var(--fg);padding:9px 14px}button:hover{border-color:var(--acc2)}
+button.primary{background:linear-gradient(135deg,var(--acc),#ff6b8a);color:#1b1020;border:0;font-weight:800;font-size:17px;padding:14px 26px;width:100%}button.primary:disabled{opacity:.5;cursor:wait}
+.styles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.style{display:flex;flex-direction:column;height:100%;border:2px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel2);cursor:pointer;text-align:left;padding:0;transition:transform .12s}.style:hover{transform:translateY(-2px)}
+.style[aria-pressed=true]{border-color:var(--acc);box-shadow:0 0 0 3px rgba(255,179,71,.25)}
+.style .pv{aspect-ratio:16/9;background:#222 center/cover no-repeat;position:relative}.style .pv video{width:100%;height:100%;object-fit:cover;display:block}
+.style .tag{position:absolute;left:6px;top:6px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;background:rgba(0,0,0,.65);color:#fff}
+.style .nm{padding:8px 10px 2px;font-weight:700;font-size:14px}.style .bl{padding:0 10px 10px;color:var(--muted);font-size:12px;line-height:1.3}
+label{font-size:13px;color:var(--muted);display:block;margin-bottom:4px}select,input[type=text]{width:100%;background:var(--panel2);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font:inherit}
+.two{display:grid;grid-template-columns:1fr 1.4fr;gap:12px}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:10px 14px;color:var(--muted);font-size:14px;cursor:pointer}.drop.on{border-color:var(--acc);color:var(--fg)}
+#stages{list-style:none;margin:0;padding:0;display:grid;gap:8px}#stages li{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);font-size:14px}
+#stages li .dot{width:12px;height:12px;border-radius:50%;background:var(--line);flex:none}#stages li.active .dot{background:var(--acc);box-shadow:0 0 0 4px rgba(255,179,71,.25);animation:p 1.2s infinite}#stages li.done .dot{background:var(--ok)}#stages li.err .dot{background:var(--bad)}
+#stages li .t{margin-left:auto;color:var(--muted);font-variant-numeric:tabular-nums;font-size:12px}#stages li .m{color:var(--muted);font-size:12px}
+@keyframes p{50%{box-shadow:0 0 0 8px rgba(255,179,71,0)}}
+.bar{height:8px;border-radius:99px;background:var(--panel2);overflow:hidden;margin:14px 0}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acc2),var(--acc));transition:width .4s}
+.strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:6px;margin-top:12px}.strip img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;background:var(--panel2);border:1px solid var(--line)}
+video.main{width:100%;border-radius:14px;background:#000;aspect-ratio:16/9}
+.kv{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.pill{font-size:12.5px;padding:4px 10px;border-radius:99px;border:1px solid var(--line);background:var(--panel2)}.pill.ok{border-color:var(--ok);color:var(--ok)}.pill.bad{border-color:var(--bad);color:var(--bad)}
+details{margin-top:10px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}summary{cursor:pointer;font-weight:600}
+ol.lines{margin:8px 0 0;padding-left:20px;color:var(--muted);font-size:14px}.timeline{display:flex;height:14px;border-radius:99px;overflow:hidden;margin:10px 0 4px;background:var(--panel2)}.timeline span{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted)}.legend b{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.hide{display:none}footer{margin-top:34px;color:var(--muted);font-size:13px;text-align:center}a{color:var(--acc2)}
+.err{color:var(--bad);font-size:14px;margin-top:8px}
+.ed{display:grid;grid-template-columns:84px 1fr;gap:10px;margin:10px 0;align-items:start}.ed img{width:84px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:1px solid var(--line)}.ed textarea{min-height:46px;font-size:13px;margin-bottom:4px}.ed small{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="logo"><i>🎞️</i> PageReel</div>
+  <div class="badges"><span class="badge">100% open-weight models</span><span class="badge">Built on the Comfy SDK</span><span class="badge">One 24 GB GPU</span><span class="badge">Vision QA loop</span></div>
+</header>
+<h1>Drop a page. <em>Get a reel.</em></h1>
+<p class="lead">PageReel turns any document into a narrated explainer video — storybook watercolor, pixel game, claymation, chalkboard, cinematic clips and more. Scripts are fact-checked against your text, every frame is inspected by a vision model, and the whole thing runs on open weights through ComfyUI.</p>
+
+<div class="grid">
+ <section>
+  <div class="card">
+   <h2><span class="step">1</span>Your document</h2><p class="sub">Paste text, or drop a PDF / .md / .txt file.</p>
+   <textarea id="text" placeholder="Paste at least a few paragraphs…"></textarea>
+   <div class="row"><label class="drop" id="drop" for="file">📄 Drop a file here or click to choose</label><input id="file" type="file" accept=".pdf,.txt,.md" class="hide"><button class="sample" data-f="volcanoes" type="button">Sample: volcanoes</button><button class="sample" data-f="road_safety" type="button">Sample: road safety</button></div>
+  </div>
+  <div class="card" style="margin-top:18px">
+   <h2><span class="step">2</span>Pick a look</h2><p class="sub">Hover a card to preview. Same document, completely different film.</p>
+   <div class="styles" id="styles" role="group" aria-label="Visual style"></div>
+  </div>
+  <div class="card" style="margin-top:18px">
+   <h2><span class="step">3</span>Audience &amp; language</h2>
+   <div class="two" style="margin-top:10px"><div><label for="lang">Narration language</label><select id="lang"><option>English</option><option>Spanish</option><option>Portuguese</option><option>French</option><option>German</option><option>Italian</option><option>Japanese</option><option>Chinese</option><option>Korean</option><option>Russian</option></select></div>
+   <div><label for="aud">Who is it for?</label><input id="aud" type="text" value="curious learners aged 8-12"></div></div>
+   <div style="margin-top:16px"><button class="primary" id="go">✨ Make my reel</button><div class="err" id="err"></div></div>
+  </div>
+ </section>
+
+ <section>
+  <div class="card" id="run" style="position:sticky;top:16px">
+   <h2>Your reel</h2><p class="sub" id="runsub">Pick a document and a style, then press the button. Generation runs on your own GPU.</p>
+   <div id="progress" class="hide">
+     <div class="bar"><i id="pbar"></i></div>
+     <ul id="stages"></ul>
+     <div class="strip" id="strip"></div>
+   </div>
+   <div id="result" class="hide">
+     <video class="main" id="player" controls playsinline></video>
+     <div class="row"><a class="btn" id="dl" download>⬇ Download mp4</a><span class="pill" id="tot"></span></div>
+     <div class="kv" id="checks"></div>
+     <div class="timeline" id="tl"></div><div class="legend" id="legend"></div>
+     <details><summary>Script (fact-checked against your document)</summary><ol class="lines" id="lines"></ol></details>
+     <details id="editor"><summary>✏️ Edit &amp; remake — change a line or reshoot a scene</summary><p class="sub" style="margin:8px 0">Only what you change is regenerated; the rest comes from cache.</p><div id="edits"></div><button id="remake" type="button" class="primary" style="margin-top:10px;font-size:15px;padding:11px">Remake with my edits</button></details>
+     <details><summary>What the fact-checker changed</summary><div id="facts" class="sub" style="margin-top:8px"></div></details>
+   </div>
+  </div>
+ </section>
+</div>
+<footer>PageReel · Apache-2.0 · FLUX.2 klein, LTX-2.5, ACE-Step, Qwen3-TTS and a local Qwen vision LLM, orchestrated with the Comfy SDK.</footer>
+</div>
+<script>
+const $=s=>document.querySelector(s);let style=null,JID=null,pollStrip=null;
+const STAGES=[['script','Write & fact-check the script'],['voice','Design the voice & narrate'],['visuals','Create the visuals (ComfyUI)'],['qa','Vision QA — inspect every frame'],['assemble','Cut it together'],['music','Compose music (ACE-Step)'],['mix','Mix & normalize to −16 LUFS'],['verify','Verify the final video']];
+const ENGINE={image:'Comfy images',cinematic:'Comfy video',motion:'Code-rendered'};
+async function styles_(){const r=await fetch('/api/styles');const list=await r.json();const box=$('#styles');
+ list.forEach((s,i)=>{const b=document.createElement('button');b.className='style';b.type='button';b.setAttribute('aria-pressed','false');b.dataset.id=s.id;
+  b.innerHTML=`<div class="pv" style="background-image:url(/examples/previews/${s.id}.jpg)"><span class="tag">${ENGINE[s.engine]||s.engine}</span></div><div class="nm">${s.name}</div><div class="bl">${s.blurb||''}</div>`;
+  b.onmouseenter=()=>{const pv=b.querySelector('.pv');if(pv.querySelector('video'))return;const v=document.createElement('video');v.src=`/examples/previews/${s.id}.mp4`;v.muted=true;v.loop=true;v.autoplay=true;v.playsInline=true;v.onerror=()=>v.remove();pv.prepend(v)};
+  b.onmouseleave=()=>{b.querySelector('video')?.remove()};
+  b.onclick=()=>{document.querySelectorAll('.style').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');style=s.id};box.appendChild(b);if(i==0)b.click()})}
+document.querySelectorAll('.sample').forEach(b=>b.onclick=async()=>{$('#text').value=await (await fetch(`/examples/${b.dataset.f}.md`)).text()});
+$('#file').onchange=e=>{const f=e.target.files[0];if(f){$('#drop').textContent='📄 '+f.name;$('#drop').classList.add('on')}};
+function stageList(){const ul=$('#stages');ul.innerHTML='';STAGES.forEach(([k,t])=>{const li=document.createElement('li');li.id='st_'+k;li.innerHTML=`<span class="dot"></span><div><div>${t}</div><div class="m"></div></div><span class="t"></span>`;ul.appendChild(li)})}
+function setStage(ev){const keys=STAGES.map(s=>s[0]);const i=keys.indexOf(ev.stage);
+ keys.forEach((k,j)=>{const li=$('#st_'+k);if(!li)return;if(j<i){li.className='done'}else if(j==i){li.className=ev.stage=='done'?'done':'active';li.querySelector('.m').textContent=ev.msg}});
+ if(ev.stage=='done')keys.forEach(k=>$('#st_'+k).className='done');
+ if(ev.stage=='error'){$('#err').textContent=ev.msg;const a=document.querySelector('#stages li.active');if(a)a.className='err'}
+ $('#pbar').style.width=ev.pct+'%'}
+function showStrip(){const s=$('#strip');s.innerHTML='';for(let i=1;i<=12;i++){const im=new Image();im.dataset.n=String(i).padStart(2,'0');im.alt='scene '+i;im.className='hide';s.appendChild(im)}
+ pollStrip=setInterval(()=>{s.querySelectorAll('img').forEach(im=>{if(im.dataset.ok)return;const t=new Image();t.onload=()=>{im.src=t.src;im.className='';im.dataset.ok=1};t.src=`/api/jobs/${JID}/file/${im.dataset.n}.png?`+Date.now()})},3000)}
+function watch(id){JID=id;$('#result').classList.add('hide');$('#progress').classList.remove('hide');$('#runsub').textContent='Running on your GPU… this takes a few minutes. Frames appear as they are made.';stageList();showStrip();
+ const es=new EventSource(`/api/jobs/${JID}/events`);es.onmessage=e=>setStage(JSON.parse(e.data));
+ es.addEventListener('end',e=>{es.close();clearInterval(pollStrip);$('#go').disabled=false;done(JSON.parse(e.data))})}
+$('#go').onclick=async()=>{$('#err').textContent='';const fd=new FormData();fd.append('style',style);fd.append('language',$('#lang').value);fd.append('audience',$('#aud').value);
+ const f=$('#file').files[0];if(f)fd.append('file',f);fd.append('text',$('#text').value);
+ $('#go').disabled=true;const r=await fetch('/api/jobs',{method:'POST',body:fd});if(!r.ok){$('#err').textContent=(await r.json()).detail||'Error';$('#go').disabled=false;return}
+ watch((await r.json()).id)};
+let CUR=null;
+$('#remake').onclick=async()=>{const scenes=[...document.querySelectorAll('.ed')].map(d=>({id:d.dataset.id,n:d.querySelector('.n').value,p:d.querySelector('.p')?.value,v:d.querySelector('.v')?.value}));
+ $('#remake').disabled=true;const r=await fetch(`/api/jobs/${JID}/remake`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenes})});$('#remake').disabled=false;
+ if(!r.ok){alert('Could not remake');return}watch((await r.json()).id)};
+const COL={script:'#7c8cff',narration:'#ff6b8a',images:'#ffb347',video_clips:'#ff8a3d',render:'#ffb347',vision_qa:'#3ee6a8',regeneration:'#2bb5ff',assemble:'#a78bfa',music:'#f472b6',mix:'#94a3b8',verification:'#34d399'};
+function done(j){if(j.status=='error'){$('#runsub').textContent='Something went wrong: '+j.error;return}
+ $('#runsub').textContent=j.spec.title;$('#progress').classList.add('hide');$('#result').classList.remove('hide');
+ $('#player').src=`/api/jobs/${JID}/video`;$('#dl').href=`/api/jobs/${JID}/video`;const R=j.result,V=R.verification;
+ $('#tot').textContent=`made in ${Math.round(R.total_s)} s`;
+ $('#checks').innerHTML=[[V.technical_ok,`audio ${V.lufs} LUFS`],[V.frame_issues.length==0,V.frame_issues.length?`${V.frame_issues.length} frames flagged`:'vision check clean'],[V.long_silences==0&&V.black_frames==0,'no silences or black frames'],[j.spec.fact_check.length==0,`${j.spec.fact_check.length} fact fixes`]].map(([ok,t])=>`<span class="pill ${ok?'ok':'bad'}">${ok?'✓':'!'} ${t}</span>`).join('');
+ const T=R.timings,sum=Object.values(T).reduce((a,b)=>a+b,0);$('#tl').innerHTML=Object.entries(T).map(([k,v])=>`<span title="${k} ${v}s" style="width:${100*v/sum}%;background:${COL[k]||'#888'}"></span>`).join('');
+ $('#legend').innerHTML=Object.entries(T).map(([k,v])=>`<span><b style="background:${COL[k]||'#888'}"></b>${k} ${v}s</span>`).join('');
+ $('#lines').innerHTML=j.spec.scenes.map(s=>`<li>${s.n}</li>`).join('');CUR=j;
+ $('#edits').innerHTML=j.spec.scenes.map(s=>`<div class="ed" data-id="${s.id}"><img src="/api/jobs/${JID}/file/${s.id}.png" alt="" onerror="this.style.visibility='hidden'"><div><textarea class="n" aria-label="narration ${s.id}">${s.n.replace(/</g,'&lt;')}</textarea>${s.p?`<textarea class="p" aria-label="visual prompt ${s.id}">${s.p.replace(/</g,'&lt;')}</textarea><small>visual prompt</small>`:''}${s.v?`<textarea class="v" aria-label="motion prompt ${s.id}">${s.v.replace(/</g,'&lt;')}</textarea><small>motion prompt</small>`:''}</div></div>`).join('');
+ $('#facts').innerHTML=j.spec.fact_check.length?j.spec.fact_check.map(c=>`<p><b>Line ${c.line}</b><br><s>${c.before}</s><br>${c.after}<br><i>${c.reason}</i></p>`).join(''):'Every line was supported by your document.'}
+styles_();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+ "id": "papercut",
+ "name": "Cut-paper collage",
+ "engine": "image",
+ "blurb": "Layered cardboard and kraft paper with soft shadows.",
+ "image_style": "cut-paper collage: everything made of flat pieces of colored cardstock and kraft paper cut out and layered, soft shadows between layers, visible paper fibers, simple shapes and vivid colors, handmade children's craft style, no text or letters",
+ "transition": "slideleft",
+ "camera": "drift",
+ "character": true,
+ "music": {
+  "tags": "whimsical folk, glockenspiel, ukulele, hand claps, light accordion, handmade charming kids music, instrumental",
+  "bpm": 100
+ },
+ "voice": "warm friendly female primary-school teacher, close and expressive tone",
+ "order": 2
+}

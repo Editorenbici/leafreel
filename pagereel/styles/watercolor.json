@@ -1,0 +1,16 @@
+{
+ "id": "watercolor",
+ "name": "Storybook watercolor",
+ "engine": "image",
+ "blurb": "Soft hand-painted illustrations with a recurring character.",
+ "image_style": "children's picture-book watercolor illustration, soft warm colors, delicate brush strokes, pastel palette, calm and hopeful mood, no text or letters",
+ "transition": "fade",
+ "camera": "drift",
+ "character": true,
+ "music": {
+  "tags": "gentle acoustic guitar, soft piano, warm and calm storytelling, instrumental",
+  "bpm": 84
+ },
+ "voice": "warm young female storyteller, slow and clear pace, kind and expressive tone",
+ "order": 1
+}

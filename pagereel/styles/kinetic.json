@@ -1,0 +1,13 @@
+{
+ "id": "kinetic",
+ "name": "Kinetic typography",
+ "engine": "motion",
+ "theme": "kinetic",
+ "blurb": "Words fly in on the beat of the narration.",
+ "music": {
+  "tags": "modern clean electronic pop, light synth plucks, soft kick and snap, positive and bright, instrumental",
+  "bpm": 118
+ },
+ "voice": "confident modern female announcer, inspiring and agile tone",
+ "order": 8
+}
