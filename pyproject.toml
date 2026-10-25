@@ -7,8 +7,12 @@ license = { text = "Apache-2.0" }
 requires-python = ">=3.10"
 dependencies = ["comfy-sdk>=0.5.0", "fastapi", "uvicorn[standard]", "pillow", "pypdf", "python-multipart", "httpx"]
 
+[project.optional-dependencies]
+agents = ["mcp"]
+
 [project.scripts]
 pagereel = "pagereel.cli:main"
+pagereel-mcp = "pagereel.mcp_server:main"
 
 [build-system]
 requires = ["setuptools>=68"]
