@@ -6,6 +6,7 @@ One 53-second-ish reel per style from `examples/volcanoes.md`. App/LLM box: ARM 
 | Style | Video | Total | Script+fact-check | Voice | Visuals | Vision QA + redo | Music | Assemble+mix | Verify | LUFS | Check |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | chalkboard | 50 s | **146 s** | 55 | 30 | 12 | 0 | 7 | 4 | 38 | -16.3 | OK |
+| cinematic | 51 s | **2108 s** | 87 | 29 | 1477 | 64 | 26 | 27 | 38 | -16.1 | OK |
 | clay | 56 s | **344 s** | 51 | 31 | 88 | 91 | 20 | 26 | 38 | -16.2 | OK |
 | flat | 49 s | **163 s** | 55 | 31 | 11 | 0 | 21 | 4 | 42 | -16.2 | OK |
 | kinetic | 50 s | **131 s** | 49 | 29 | 10 | 0 | 7 | 4 | 33 | -16.2 | OK |
