@@ -1,4 +1,4 @@
-"""`pagereel doctor`: checks the whole recipe (LLM node, ComfyUI node, models, narration, ffmpeg, Chromium) and says which styles are ready."""
+"""`leafreel doctor`: checks the whole recipe (LLM node, ComfyUI node, models, narration, ffmpeg, Chromium) and says which styles are ready."""
 import json, os, shlex, shutil, subprocess, urllib.request
 from pathlib import Path
 import httpx
@@ -34,7 +34,7 @@ def check_models(object_info):
     return out
 
 def run():
-    r = R(); print(f"PageReel doctor — LLM {config.LLM_BASE_URL} · Comfy {config.COMFY_BASE_URL}\n")
+    r = R(); print(f"LeafReel doctor — LLM {config.LLM_BASE_URL} · Comfy {config.COMFY_BASE_URL}\n")
     print("Tools"); r.add("ffmpeg", bool(shutil.which("ffmpeg") and shutil.which("ffprobe")), shutil.which("ffmpeg") or "not found", "install ffmpeg")
     print("\nLLM node (script, fact-check, vision QA)")
     try:

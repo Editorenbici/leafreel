@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 import pytest
-from pagereel import styles, comfy, motion, assemble, script, llm
+from leafreel import styles, comfy, motion, assemble, script, llm
 
 def test_styles_are_complete():
     s = styles.load_all(); assert {"watercolor", "papercut", "pixel", "clay", "cinematic", "flat", "chalkboard", "kinetic"} <= set(s)

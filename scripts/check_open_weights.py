@@ -2,7 +2,7 @@
 """Fails (exit 1) if any bundled workflow uses a partner/API node. Offline allow-list check, plus a live check when COMFY_DIRECT_URL points at ComfyUI.
 Usage: scripts/check_open_weights.py"""
 import json, os, sys, urllib.request
-from pagereel import open_weights as ow
+from leafreel import open_weights as ow
 bad = {k: v for k, v in ow.audit_offline().items() if v}
 for k, v in ow.audit_offline().items(): print(f"{'OK ' if not v else 'BAD'} {k}: {', '.join(v) if v else 'only local nodes'}")
 url = os.environ.get("COMFY_DIRECT_URL")

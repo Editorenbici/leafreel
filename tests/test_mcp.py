@@ -2,7 +2,7 @@
 import time
 import pytest
 pytest.importorskip("mcp")
-from pagereel import mcp_server as m, pipeline
+from leafreel import mcp_server as m, pipeline
 
 def _fn(x): return getattr(x, "fn", x)
 

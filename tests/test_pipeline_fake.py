@@ -4,7 +4,7 @@ import json, shutil, subprocess
 from pathlib import Path
 import numpy as np, pytest
 from PIL import Image, ImageDraw
-from pagereel import pipeline, tts, llm, comfy, script, qa
+from leafreel import pipeline, tts, llm, comfy, script, qa
 
 pytestmark = pytest.mark.skipif(not shutil.which("ffmpeg"), reason="ffmpeg not installed")
 

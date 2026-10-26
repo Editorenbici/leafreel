@@ -3,7 +3,7 @@
 # Usage: scripts/make_previews.sh RUNS_DIR   (expects RUNS_DIR/<doc>_<style>/video.mp4)
 set -euo pipefail
 cd "$(dirname "$0")/.."
-RUNS=${1:?runs dir}; PV=pagereel/examples/previews; OUT=pagereel/examples/outputs; mkdir -p "$PV" "$OUT"
+RUNS=${1:?runs dir}; PV=leafreel/examples/previews; OUT=leafreel/examples/outputs; mkdir -p "$PV" "$OUT"
 for v in "$RUNS"/volcanoes_*/video.mp4; do
   style=$(basename "$(dirname "$v")"); style=${style#volcanoes_}; d=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$v")
   ffmpeg -y -loglevel error -ss "$(python3 -c "print($d*0.42)")" -i "$v" -frames:v 1 -vf scale=640:-1 -q:v 4 "$PV/$style.jpg"

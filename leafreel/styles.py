@@ -1,10 +1,10 @@
-"""Style packs: JSON files in pagereel/styles/ (or $PAGEREEL_STYLES). Add your own by dropping a file there."""
+"""Style packs: JSON files in leafreel/styles/ (or $LEAFREEL_STYLES). Add your own by dropping a file there."""
 import json, os
 from pathlib import Path
 
 def _dirs():
     d = [Path(__file__).parent / "styles"]
-    if os.environ.get("PAGEREEL_STYLES"): d.append(Path(os.environ["PAGEREEL_STYLES"]))
+    if os.environ.get("LEAFREEL_STYLES"): d.append(Path(os.environ["LEAFREEL_STYLES"]))
     return d
 
 def load_all():

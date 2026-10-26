@@ -1,12 +1,12 @@
-# 🎞️ PageReel — drop a page, get a reel
+# 🎞️ LeafReel — drop a page, get a reel
 
-**PageReel turns any document into a narrated explainer video in eight completely different visual styles — with open-weight models, orchestrated through ComfyUI and the Comfy SDK.**
+**LeafReel turns any document into a narrated explainer video in eight completely different visual styles — with open-weight models, orchestrated through ComfyUI and the Comfy SDK.**
 
 Paste text or drop a PDF, pick a look (storybook watercolor, cut-paper collage, 16-bit pixel game, claymation, cinematic LTX clips, flat motion graphics, chalkboard, kinetic typography), press one button. Minutes later you get a ~1 minute reel with designed voice, music and subtitles — plus a **quality report** that proves what was checked.
 
 > Built for the [Open Source Higgsfield](https://comfy.org/open-source-higgsfield) challenge. Category: **Open Weights Only** (no partner nodes, no paid APIs).
 
-<p align="center"><img src="docs/img/app.png" alt="PageReel web app" width="860"></p>
+<p align="center"><img src="docs/img/app.png" alt="LeafReel web app" width="860"></p>
 
 ## Why it is different
 
@@ -20,19 +20,19 @@ Paste text or drop a PDF, pick a look (storybook watercolor, cut-paper collage, 
 | **Edit & remake** | Change a narration line or reshoot one scene's prompt; only what changed is regenerated (frames and clips are cached by prompt). |
 | **Honest verification** | Final video is measured (−16 LUFS, peak, black frames, silences) and 8 real frames are reviewed by the vision model. |
 | **No voice cloning** | Narrators are *designed* from a text description (Qwen3-TTS VoiceDesign). No real person's voice is imitated. |
-| **Agent-native** | An MCP server (`pagereel-mcp`) lets Hermes Agent, OpenClaw, pi, Claude Code… send a PDF from a chat app and get the reel back. Verified end to end with Hermes Agent driven by a local Qwen. See [docs/AGENT_INTEGRATION.md](docs/AGENT_INTEGRATION.md). |
-| **A recipe, not a pile of parts** | Two nodes (a vision-LLM "brain" + a ComfyUI "studio"), systemd units and one command — `pagereel doctor` — that checks the LLM, vision input, the Comfy SDK proxy, every model file and which styles are ready. [docs/RECIPE.md](docs/RECIPE.md) |
+| **Agent-native** | An MCP server (`leafreel-mcp`) lets Hermes Agent, OpenClaw, pi, Claude Code… send a PDF from a chat app and get the reel back. Verified end to end with Hermes Agent driven by a local Qwen. See [docs/AGENT_INTEGRATION.md](docs/AGENT_INTEGRATION.md). |
+| **A recipe, not a pile of parts** | Two nodes (a vision-LLM "brain" + a ComfyUI "studio"), systemd units and one command — `leafreel doctor` — that checks the LLM, vision input, the Comfy SDK proxy, every model file and which styles are ready. [docs/RECIPE.md](docs/RECIPE.md) |
 | **Provably open weights** | `scripts/check_open_weights.py` fails if any bundled workflow contains a partner/API node (checked offline and, when ComfyUI is reachable, against its own `api_node` flags). It runs in CI. |
 | **QA is visible** | The UI shows every frame the vision reviewer rejected next to its replacement, with the reason. |
 
 ## Built on the Comfy Developer Platform
 
-Every generative step is a ComfyUI **API-format workflow** (`pagereel/workflows/*.api.json`) run with `comfy-sdk`:
+Every generative step is a ComfyUI **API-format workflow** (`leafreel/workflows/*.api.json`) run with `comfy-sdk`:
 
 ```python
 from comfy_sdk import Comfy
 client = Comfy(api_key="local")                       # COMFY_BASE_URL picks local proxy, Comfy API deployment or Comfy Cloud
-wf = client.workflows.from_file("pagereel/workflows/flux2_klein_ref.api.json")
+wf = client.workflows.from_file("leafreel/workflows/flux2_klein_ref.api.json")
 wf.set_input("74", "text", prompt); wf.set_input("80", "image", client.assets.from_file("hero.png"))
 client.run(wf).get_outputs("9")[0].to_file("scene.png")
 ```
@@ -75,9 +75,9 @@ All eight reels passed the automatic checks (−16 LUFS, no black frames or long
 pip install -e '.[agents]' && scripts/setup_motion.sh
 export COMFY_BASE_URL=http://127.0.0.1:8189      # comfy-api-proxy in front of your ComfyUI
 export LLM_BASE_URL=http://127.0.0.1:8090/v1     # any OpenAI-compatible vision LLM
-pagereel doctor                                  # checks every node/model and lists the styles ready on your hardware
-pagereel serve                                   # http://127.0.0.1:8100
-# or: pagereel make examples/volcanoes.md --style papercut --language Spanish
+leafreel doctor                                  # checks every node/model and lists the styles ready on your hardware
+leafreel serve                                   # http://127.0.0.1:8100
+# or: leafreel make examples/volcanoes.md --style papercut --language Spanish
 ```
 
 Full instructions, model files and custom nodes: [docs/SETUP.md](docs/SETUP.md). Models and licenses: [docs/MODELS.md](docs/MODELS.md). Measured timings: [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
@@ -88,8 +88,8 @@ Developed on two boxes — an ARM mini-PC (121 GB unified memory: app, LLM, ffmp
 
 ## Extending
 
-* **New style:** add `pagereel/styles/<id>.json` (copy `pixel.json`).
-* **New workflow step:** drop an API-format JSON in `pagereel/workflows/` and register parameter→node ids in `pagereel/comfy.py::SPEC`; `pytest` verifies the mapping.
+* **New style:** add `leafreel/styles/<id>.json` (copy `pixel.json`).
+* **New workflow step:** drop an API-format JSON in `leafreel/workflows/` and register parameter→node ids in `leafreel/comfy.py::SPEC`; `pytest` verifies the mapping.
 * **Other languages:** pick the language in the UI/CLI (`--language Spanish`); the narrator speaks it and subtitles follow.
 * **Other TTS / LLM:** `TTS_BACKEND=http`, `LLM_BASE_URL`.
 

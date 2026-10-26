@@ -1,6 +1,6 @@
 # Models and licenses
 
-PageReel does **not** ship any weights. Everything below is downloaded by you and keeps its own license.
+LeafReel does **not** ship any weights. Everything below is downloaded by you and keeps its own license.
 Nothing in the default configuration calls a partner node or a paid API.
 
 | Role | Model (as used in the bundled workflows) | License (as published) | Notes |
@@ -14,7 +14,7 @@ Nothing in the default configuration calls a partner node or a paid API.
 
 ## Responsible-use choices built in
 
-* **No voice cloning.** Voices are generated from descriptions, so PageReel never imitates a real person.
+* **No voice cloning.** Voices are generated from descriptions, so LeafReel never imitates a real person.
 * **No third-party IP in examples.** The sample document is original text written for this repository.
 * **Automatic review.** A vision model rejects frames with garbled text, deformed hands/faces or disturbing content and regenerates them;
   the script is compared with the source document and unsupported claims are rewritten (every change is listed in the UI).

@@ -4,16 +4,16 @@ Nothing is invented: prompts, tool calls, tool results and the final answer are 
 import json, re, sys, html
 from pathlib import Path
 root = Path(__file__).resolve().parent.parent; ev = json.loads((root / "demo/data/hermes_session.json").read_text())
-short = lambda s: re.sub(r"/[^\s\"]*?/pagereel_data/runs/", "…/runs/", re.sub(r"/home/maya/estudio/concurso-higgsfield/pagereel/", "", s))
+short = lambda s: re.sub(r"/[^\s\"]*?/leafreel_data/runs/", "…/runs/", re.sub(r"/home/maya/estudio/concurso-higgsfield/leafreel/", "", s))
 lines = []   # (kind, text, hold_seconds)
 for e in ev:
     k = e[0]
     if k == "user": lines.append(("you", short(e[1]).split(" Start it ONCE")[0], 0.5))
     elif k == "call" and e[1] == "tool_call":
         for c in json.loads(e[2])["calls"]:
-            a = {k: (short(v) if isinstance(v, str) else v) for k, v in c["arguments"].items()}; name = c["name"].replace("mcp__pagereel__", "pagereel.")
+            a = {k: (short(v) if isinstance(v, str) else v) for k, v in c["arguments"].items()}; name = c["name"].replace("mcp__leafreel__", "leafreel.")
             lines.append(("tool", f"{name}({', '.join(f'{k}={json.dumps(v)}' for k, v in a.items())})", 0.3))
-    elif k == "result" and e[1].startswith("mcp__pagereel__"):
+    elif k == "result" and e[1].startswith("mcp__leafreel__"):
         try: j = json.loads(json.loads(e[2])["result"])
         except Exception: continue
         if "job_id" in j and len(j) == 1: lines.append(("out", f"job_id: {j['job_id']}", 0.2))
@@ -36,7 +36,7 @@ body{{background:radial-gradient(900px 500px at 85% 0%,rgba(124,140,255,.25),tra
 .body{{padding:20px 26px;font-size:19px;line-height:1.5;color:#dfe3ff;white-space:pre-wrap;word-break:break-word}}
 .you{{color:#7c8cff}}.tool{{color:#ffb347}}.out{{color:#8be9c1;padding-left:26px}}.hermes{{color:#eef1ff}}.lab{{font-weight:700;margin-right:10px}}
 .cur{{display:inline-block;width:10px;height:20px;background:#ffb347;vertical-align:-3px}}
-</style><body><div class="win"><div class="bar"><span class="dot" style="background:#ff5f56"></span><span class="dot" style="background:#ffbd2e"></span><span class="dot" style="background:#27c93f"></span><span style="margin-left:14px">Hermes Agent · local Qwen3.8 Flash Next · MCP: pagereel</span></div><div class="body" id="b"></div></div>
+</style><body><div class="win"><div class="bar"><span class="dot" style="background:#ff5f56"></span><span class="dot" style="background:#ffbd2e"></span><span class="dot" style="background:#27c93f"></span><span style="margin-left:14px">Hermes Agent · local Qwen3.8 Flash Next · MCP: leafreel</span></div><div class="body" id="b"></div></div>
 <script>
 const items={json.dumps(items)};const b=document.getElementById('b');
 const lab={{you:'you ▸ ',tool:'⚙ ',out:'↳ ',hermes:''}};

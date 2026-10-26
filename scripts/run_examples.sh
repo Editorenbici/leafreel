@@ -3,8 +3,8 @@
 set -u
 cd "$(dirname "$0")/.."
 for style in "$@"; do
-  out=${RUNS:-$HOME/.pagereel/runs}/volcanoes_$style
+  out=${RUNS:-$HOME/.leafreel/runs}/volcanoes_$style
   [ -f "$out/video.mp4" ] && { echo "skip $style"; continue; }
-  .venv/bin/pagereel make examples/volcanoes.md --style "$style" --out "$out" > "$out.log" 2>&1 || echo "FAILED $style"
+  .venv/bin/leafreel make examples/volcanoes.md --style "$style" --out "$out" > "$out.log" 2>&1 || echo "FAILED $style"
 done
 echo ALL_DONE

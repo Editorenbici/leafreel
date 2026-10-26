@@ -17,7 +17,7 @@ def narrate(lines, voice_description, language, dest_dir, seed=7):
 def _qwen3(lines, desc, language, wav, timings, seed):
     txt = wav.with_name("narration.txt"); txt.write_text("\n".join(lines) + "\n")
     if config.TTS_SSH:
-        r = f"pagereel_tts/{wav.parent.name}"; h = config.TTS_SSH
+        r = f"leafreel_tts/{wav.parent.name}"; h = config.TTS_SSH
         subprocess.run(["ssh", "-o", "BatchMode=yes", h, f"mkdir -p {r}"], check=True)
         subprocess.run(["scp", "-q", str(HELPER), str(txt), f"{h}:{r}/"], check=True)
         subprocess.run(["ssh", "-o", "BatchMode=yes", h, f"cd {r} && {config.TTS_PYTHON} tts_qwen3.py --seed {seed} --language '{language}' --voice '{desc}' narration.txt narration.wav"], check=True)

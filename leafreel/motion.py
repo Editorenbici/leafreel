@@ -106,7 +106,7 @@ def build(spec, T, theme):
 
 RENDER = r"""
 import { createRequire } from 'module'; import fs from 'fs'; import path from 'path';
-const require = createRequire(process.env.PAGEREEL_ROOT + '/package.json'); const { chromium } = require('playwright-core');
+const require = createRequire(process.env.LEAFREEL_ROOT + '/package.json'); const { chromium } = require('playwright-core');
 const [,, file, outdir, fps, w, k, K] = process.argv; const FPS = +fps, W = +w, KK = +k, NK = +K;
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined, args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--allow-file-access-from-files', '--force-color-profile=srgb'] });
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } }); await page.goto('file://' + path.resolve(file)); await page.waitForFunction(() => window.seek && window.gsap);
@@ -129,7 +129,7 @@ def render(work, spec, timings, theme, fps=25, workers=8, log=print):
     # Chromium puts unix sockets under TMPDIR; a path over ~100 chars (common in agent sandboxes) kills it at launch with SIGTRAP.
     # Give it a private, SHORT temp dir (also covers a missing/unwritable HOME or TMPDIR).
     scratch = short_tmp()
-    env = {**os.environ, "PAGEREEL_ROOT": str(ROOT), "CHROMIUM_PATH": config.CHROMIUM, "TMPDIR": str(scratch), "HOME": str(scratch)}
+    env = {**os.environ, "LEAFREEL_ROOT": str(ROOT), "CHROMIUM_PATH": config.CHROMIUM, "TMPDIR": str(scratch), "HOME": str(scratch)}
     t0 = time.time(); ps = [subprocess.Popen([NODE, str(work / "render_worker.mjs"), str(work / "index.html"), str(fr), str(fps), "1280", str(k), str(workers)],
                                               stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=env) for k in range(workers)]
     for p in ps:

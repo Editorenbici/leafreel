@@ -1,7 +1,7 @@
 """Thin layer over the Comfy SDK: run the bundled API-format workflows with named parameters.
 
 Every heavy step (images, character-locked images, image->video with audio, music) is a ComfyUI workflow in
-`pagereel/workflows/*.api.json`, executed through `comfy_sdk.Comfy`. Swap COMFY_BASE_URL to run the same
+`leafreel/workflows/*.api.json`, executed through `comfy_sdk.Comfy`. Swap COMFY_BASE_URL to run the same
 code on a local ComfyUI (comfy-api-proxy), a Comfy API deployment or Comfy Cloud.
 """
 import json, subprocess, tempfile

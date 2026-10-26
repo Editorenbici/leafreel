@@ -1,12 +1,12 @@
 # Setup
 
-PageReel needs four things: a **ComfyUI** with the models below (behind `comfy-api-proxy`, or a Comfy API deployment / Comfy Cloud),
+LeafReel needs four things: a **ComfyUI** with the models below (behind `comfy-api-proxy`, or a Comfy API deployment / Comfy Cloud),
 an **OpenAI-compatible vision LLM**, a **narration backend**, and `ffmpeg`. Python 3.10+.
 
-## 1. Install PageReel
+## 1. Install LeafReel
 
 ```bash
-git clone <this repo> && cd pagereel
+git clone <this repo> && cd leafreel
 python3 -m venv .venv && . .venv/bin/activate
 pip install -e .
 # only for the code-rendered styles (flat, chalkboard, kinetic):
@@ -15,7 +15,7 @@ scripts/setup_motion.sh        # installs gsap + playwright-core locally; then e
 
 ## 2. ComfyUI + the Comfy SDK proxy
 
-PageReel talks to ComfyUI through the **Comfy SDK** (`comfy-sdk`). For a self-hosted ComfyUI run the open-source proxy next to it:
+LeafReel talks to ComfyUI through the **Comfy SDK** (`comfy-sdk`). For a self-hosted ComfyUI run the open-source proxy next to it:
 
 ```bash
 pip install comfy-api-proxy
@@ -34,7 +34,7 @@ For a Comfy API deployment use `COMFY_BASE_URL=https://<deployment>.run.comfy.ap
 | `acestep15_music` | `acestep_v1.5_xl_turbo_bf16.safetensors` (diffusion_models), `qwen_0.6b_ace15.safetensors`, `qwen_4b_ace15.safetensors` (text_encoders), `ace_1.5_vae.safetensors` (vae) | none |
 
 Tip: open the matching official template in ComfyUI once (FLUX.2 klein text-to-image, LTX-2.5 image-to-video, ACE-Step 1.5) and it will list/download these files.
-If your file names differ, edit the JSON in `pagereel/workflows/` (the parameter→node map in `pagereel/comfy.py` stays valid) — `pytest` checks it.
+If your file names differ, edit the JSON in `leafreel/workflows/` (the parameter→node map in `leafreel/comfy.py` stays valid) — `pytest` checks it.
 
 Use only the styles you have models for: the `watercolor`, `papercut`, `pixel`, `clay` styles need FLUX only; `flat`, `chalkboard`, `kinetic` need none of the video models; `cinematic` needs LTX.
 
@@ -48,7 +48,7 @@ export LLM_BASE_URL=http://127.0.0.1:8090/v1 LLM_MODEL=<served model name>
 
 ## 4. Narration
 
-* **`TTS_BACKEND=qwen3tts` (default):** `pip install qwen-tts soundfile` on a GPU machine; PageReel runs `pagereel/tts_qwen3.py` locally, or on a remote GPU box over ssh:
+* **`TTS_BACKEND=qwen3tts` (default):** `pip install qwen-tts soundfile` on a GPU machine; LeafReel runs `leafreel/tts_qwen3.py` locally, or on a remote GPU box over ssh:
   `export TTS_SSH=user@gpu-box TTS_PYTHON=/path/to/venv/bin/python`.
   Voices are *designed from a text description* (see `voice` in each style pack), never cloned from a person.
 * **`TTS_BACKEND=http`:** any OpenAI-compatible `/v1/audio/speech` server (Kokoro-FastAPI, Orpheus…):
@@ -57,9 +57,9 @@ export LLM_BASE_URL=http://127.0.0.1:8090/v1 LLM_MODEL=<served model name>
 ## 5. Run
 
 ```bash
-pagereel serve                       # web app on http://127.0.0.1:8100
-pagereel styles                      # list style packs
-pagereel make examples/volcanoes.md --style papercut --language English
+leafreel serve                       # web app on http://127.0.0.1:8100
+leafreel styles                      # list style packs
+leafreel make examples/volcanoes.md --style papercut --language English
 ```
 
 Optional: `GPU_COOLDOWN=40` pauses 40 s between LTX clips (useful on a hot or marginal GPU).

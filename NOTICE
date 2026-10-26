@@ -1,6 +1,6 @@
-PageReel
-Copyright 2026 PageReel contributors
+LeafReel
+Copyright 2026 Patricio Bustos (Editorenbici)
 
-Licensed under the Apache License, Version 2.0. The model weights PageReel downloads and runs
+Licensed under the Apache License, Version 2.0 (see LICENSE). The model weights LeafReel downloads and runs
 (FLUX.2 klein 4B, LTX-2.5, ACE-Step 1.5, Qwen3-TTS, a Qwen vision LLM) are NOT part of this repository and keep
 their own licenses; see docs/MODELS.md.

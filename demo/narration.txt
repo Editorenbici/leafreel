@@ -1,5 +1,5 @@
 Every school, every company, every team has documents. Almost nobody watches them.
-PageReel turns a page into a reel, in any visual style you choose.
+LeafReel turns a page into a reel, in any visual style you choose.
 Drop a document. Pick a look. Press one button.
 It runs on two machines you own: a brain that writes, fact-checks, and watches every frame, and a studio that draws, animates, composes, and speaks. All open weights. Zero cloud.
 Here it is, working for real. The script is checked against your document. The voice is designed, not cloned. FLUX draws every frame with the character locked, and ACE-Step writes the music.
@@ -8,4 +8,4 @@ Same page, completely different films.
 It speaks your language too.
 Or just ask your agent. Hermes, OpenClaw, pi, anything that speaks MCP can take a PDF and bring back a reel.
 Edit a line, or reshoot a scene, and only what changed is regenerated.
-PageReel. Open weights. Open code. Two nodes, one command to check them: pagereel doctor.
+LeafReel. Open weights. Open code. Two nodes, one command to check them: leafreel doctor.

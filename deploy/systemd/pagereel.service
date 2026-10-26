@@ -1,12 +1,12 @@
-# Node A (brain). The PageReel web app.
+# Node A (brain). The LeafReel web app.
 [Unit]
-Description=PageReel web app
+Description=LeafReel web app
 After=network-online.target
 
 [Service]
-WorkingDirectory=%h/pagereel
-EnvironmentFile=%h/.config/pagereel.env
-ExecStart=%h/pagereel/.venv/bin/pagereel serve --host 0.0.0.0 --port 8100
+WorkingDirectory=%h/leafreel
+EnvironmentFile=%h/.config/leafreel.env
+ExecStart=%h/leafreel/.venv/bin/leafreel serve --host 0.0.0.0 --port 8100
 Restart=on-failure
 RestartSec=5
 

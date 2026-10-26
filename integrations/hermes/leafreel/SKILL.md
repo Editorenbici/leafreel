@@ -1,8 +1,8 @@
 ---
-name: pagereel
+name: leafreel
 description: "Turn a document or PDF into a narrated explainer video (8 visual styles) with open-weight models on ComfyUI."
 version: 0.1.0
-author: PageReel contributors
+author: LeafReel contributors
 license: Apache-2.0
 platforms: [linux, macos]
 metadata:
@@ -11,7 +11,7 @@ metadata:
     related_skills: [comfyui]
 ---
 
-# PageReel: document -> reel
+# LeafReel: document -> reel
 
 ## When to use
 The user wants a video from a document, article, lesson, chapter or PDF ("make a video from this", "explain this PDF as a short film",
@@ -22,11 +22,11 @@ Register the MCP server in `~/.hermes/config.yaml` (see `docs/AGENT_INTEGRATION.
 
 ```yaml
 mcp_servers:
-  pagereel:
-    command: /path/to/pagereel/.venv/bin/pagereel-mcp
+  leafreel:
+    command: /path/to/leafreel/.venv/bin/leafreel-mcp
     env: { COMFY_BASE_URL: "http://127.0.0.1:8189", LLM_BASE_URL: "http://127.0.0.1:8090/v1", LLM_MODEL: "<served model>" }
 ```
-Without MCP you can run the CLI: `pagereel make <doc> --style <id> --language <lang>`.
+Without MCP you can run the CLI: `leafreel make <doc> --style <id> --language <lang>`.
 
 ## How to work
 1. Call `list_styles` if the user has not chosen a look. Suggestions: story with a character -> `watercolor`, `papercut`, `clay`, `pixel`;

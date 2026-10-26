@@ -1,7 +1,7 @@
-"""MCP server (stdio): lets any MCP-capable agent (Hermes, OpenClaw, pi, Claude Code, Cursor…) make reels with PageReel.
+"""MCP server (stdio): lets any MCP-capable agent (Hermes, OpenClaw, pi, Claude Code, Cursor…) make reels with LeafReel.
 
 Reels take minutes, so the tools are asynchronous: `start_reel` returns a job id, `reel_status` reports the stage, `reel_result` returns the video.
-Run:  pagereel-mcp      (or: python -m pagereel.mcp_server)
+Run:  leafreel-mcp      (or: python -m leafreel.mcp_server)
 """
 import json, logging, os, threading, time, traceback, uuid
 from pathlib import Path
@@ -11,10 +11,10 @@ except ImportError:                    # mcp 1.x
     from mcp.server.fastmcp import FastMCP
 from . import config, styles
 
-mcp = FastMCP("pagereel", instructions="Make narrated explainer videos from a document. Call start_reel, then reel_status(job_id, wait_seconds=90) until done, then reel_result. "
+mcp = FastMCP("leafreel", instructions="Make narrated explainer videos from a document. Call start_reel, then reel_status(job_id, wait_seconds=90) until done, then reel_result. "
               "Reels take 2-6 minutes (the 'cinematic' style ~35). Only one reel runs at a time.")
 JOBS: dict[str, dict] = {}
-log = logging.getLogger("pagereel.mcp")
+log = logging.getLogger("leafreel.mcp")
 LOCK = threading.Lock()   # one GPU job at a time
 
 def _setup_log():
@@ -107,6 +107,6 @@ def remake_reel(job_id: str, edits: list[dict]) -> dict:
     return {"job_id": new}
 
 def main():
-    _setup_log(); log.info("pagereel-mcp started (pid %s)", os.getpid()); mcp.run()
+    _setup_log(); log.info("leafreel-mcp started (pid %s)", os.getpid()); mcp.run()
 
 if __name__ == "__main__": main()

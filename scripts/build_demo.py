@@ -47,7 +47,7 @@ for n, (kind, i, j, src, badge) in enumerate(LAYOUT):
         cd = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", str(src)], text=True)); f = D / cd
         sh("ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-vf", f"scale=1280:720,setpts={f:.5f}*PTS,fps={FPS},tpad=stop_mode=clone:stop_duration=3,format=yuv420p", "-t", f"{D:.3f}", "-an", "-c:v", "libx264", "-crf", "18", str(v))
     else:  # grid of example reels
-        names = ["watercolor", "papercut", "pixel", "clay", "chalkboard", "cinematic"]; ex = [root / f"pagereel/examples/outputs/volcanoes_{n}.mp4" for n in names]
+        names = ["watercolor", "papercut", "pixel", "clay", "chalkboard", "cinematic"]; ex = [root / f"leafreel/examples/outputs/volcanoes_{n}.mp4" for n in names]
         inputs = []; fc = []
         for k, p in enumerate(ex):
             inputs += ["-stream_loop", "-1", "-ss", f"{8 + 3 * k}", "-i", str(p)]

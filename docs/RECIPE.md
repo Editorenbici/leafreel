@@ -1,12 +1,12 @@
 # The two-node recipe
 
-PageReel is meant to be run as a **pair of machines**, each doing what it is best at. This is the setup everything in this repository was built and measured on.
+LeafReel is meant to be run as a **pair of machines**, each doing what it is best at. This is the setup everything in this repository was built and measured on.
 
 ```mermaid
 flowchart LR
   subgraph A["Node A — brain (DGX Spark / GX10, or any box with a 24 GB GPU)"]
     L["Vision LLM<br/>Qwen3.8 Flash Next or Qwen 27B<br/>script · fact-check · vision QA"]
-    P["PageReel app<br/>web UI · CLI · MCP server"]
+    P["LeafReel app<br/>web UI · CLI · MCP server"]
     F["ffmpeg · Chromium<br/>(code-rendered styles)"]
   end
   subgraph B["Node B — studio (PC with a 24 GB GPU)"]
@@ -35,25 +35,25 @@ You can run it on one machine with enough memory, but the recipe (and the measur
 1. **Network.** Put both nodes on a private network (LAN or Tailscale). Nothing here should face the internet.
 2. **Node B — ComfyUI + models.** Install ComfyUI with ComfyUI-GGUF and the model files from [SETUP.md](SETUP.md).
 3. **Node B — Comfy SDK proxy.** `pip install comfy-api-proxy`, then install `deploy/systemd/comfy-api-proxy.service` (it binds to the private interface and requires a bearer token).
-4. **Node B — narration.** `pip install qwen-tts soundfile` in a venv; PageReel runs the helper over ssh (`TTS_SSH`).
-5. **Node A — LLM + app.** Serve any OpenAI-compatible vision model; `pip install -e '.[agents]'`; `scripts/setup_motion.sh`; copy `deploy/pagereel.env.example` to `~/.config/pagereel.env`.
+4. **Node B — narration.** `pip install qwen-tts soundfile` in a venv; LeafReel runs the helper over ssh (`TTS_SSH`).
+5. **Node A — LLM + app.** Serve any OpenAI-compatible vision model; `pip install -e '.[agents]'`; `scripts/setup_motion.sh`; copy `deploy/leafreel.env.example` to `~/.config/leafreel.env`.
 6. **Check everything:**
 
 ```bash
-set -a; . ~/.config/pagereel.env; set +a
-pagereel doctor            # LLM + vision, proxy, model files, narration, Chromium  ->  "Styles ready"
+set -a; . ~/.config/leafreel.env; set +a
+leafreel doctor            # LLM + vision, proxy, model files, narration, Chromium  ->  "Styles ready"
 python scripts/check_open_weights.py   # proves the workflows contain no partner/API nodes
-pagereel serve
+leafreel serve
 ```
 
-`pagereel doctor` ends with the list of styles that are ready on *your* hardware, so you know what to expect before the first run.
+`leafreel doctor` ends with the list of styles that are ready on *your* hardware, so you know what to expect before the first run.
 
 ## Operating notes (learned the hard way)
 
-* **One GPU job at a time.** A long LTX run kept an RTX 3090 at 100 % for half an hour; the card was thermally limited and fell off the bus twice under sustained load. PageReel serializes jobs and has `GPU_COOLDOWN=<seconds>` to pause between clips. With 40 s pauses, a 35-minute cinematic reel ran clean.
+* **One GPU job at a time.** A long LTX run kept an RTX 3090 at 100 % for half an hour; the card was thermally limited and fell off the bus twice under sustained load. LeafReel serializes jobs and has `GPU_COOLDOWN=<seconds>` to pause between clips. With 40 s pauses, a 35-minute cinematic reel ran clean.
 * **Watch temperatures, not just utilization.** `nvidia-smi -q -d PERFORMANCE` shows *SW/HW Thermal Slowdown*; memory/hot-spot temperature is not exposed on every board.
-* **Remote login shells vary** (bash, fish, zsh). PageReel hands remote commands to `bash -c`, so they survive.
-* **Agents doing maintenance.** If an agent needs occasional root on a node (restart ComfyUI, change the GPU power limit), prefer *scoped, expiring* sudo grants over a permanent NOPASSWD rule. [`nopasswd-sudo`](https://github.com/sudoingX/nopasswd-sudo) (Apache-2.0) does exactly that: `sudo nopasswd-sudo on 1 --allow systemctl,nvidia-smi`. It is single-machine and optional, and not a dependency of PageReel.
+* **Remote login shells vary** (bash, fish, zsh). LeafReel hands remote commands to `bash -c`, so they survive.
+* **Agents doing maintenance.** If an agent needs occasional root on a node (restart ComfyUI, change the GPU power limit), prefer *scoped, expiring* sudo grants over a permanent NOPASSWD rule. [`nopasswd-sudo`](https://github.com/sudoingX/nopasswd-sudo) (Apache-2.0) does exactly that: `sudo nopasswd-sudo on 1 --allow systemctl,nvidia-smi`. It is single-machine and optional, and not a dependency of LeafReel.
 
 ## Driving it from an agent
 

@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from pagereel import open_weights as ow, doctor
+from leafreel import open_weights as ow, doctor
 
 def test_bundled_workflows_use_only_local_nodes():
     assert all(not v for v in ow.audit_offline().values())

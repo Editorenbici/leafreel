@@ -3,11 +3,11 @@
 Usage: render_html.py page.html out.mp4 [fps]"""
 import os, shutil, subprocess, sys, tempfile, time
 from pathlib import Path
-from pagereel import motion, config
+from leafreel import motion, config
 
 def render_html(page, out, fps=25, workers=8):
     page = Path(page).resolve(); tmp = motion.short_tmp(); fr = tmp / "f"; fr.mkdir(); w = tmp / "w.mjs"; w.write_text(motion.RENDER)
-    env = {**os.environ, "PAGEREEL_ROOT": str(motion.ROOT), "CHROMIUM_PATH": config.CHROMIUM, "TMPDIR": str(tmp), "HOME": str(tmp)}
+    env = {**os.environ, "LEAFREEL_ROOT": str(motion.ROOT), "CHROMIUM_PATH": config.CHROMIUM, "TMPDIR": str(tmp), "HOME": str(tmp)}
     ps = [subprocess.Popen([motion.NODE, str(w), str(page), str(fr), str(fps), "1280", str(k), str(workers)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=env) for k in range(workers)]
     for p in ps:
         _, err = p.communicate()

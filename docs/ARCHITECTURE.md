@@ -22,8 +22,8 @@ flowchart LR
 
 ## Where Comfy comes in
 
-Every generative visual/audio step is a **ComfyUI API-format workflow** stored in `pagereel/workflows/` and executed with the
-**Comfy SDK** (`comfy_sdk.Comfy`) — see `pagereel/comfy.py`. `COMFY_BASE_URL` decides where the same code runs:
+Every generative visual/audio step is a **ComfyUI API-format workflow** stored in `leafreel/workflows/` and executed with the
+**Comfy SDK** (`comfy_sdk.Comfy`) — see `leafreel/comfy.py`. `COMFY_BASE_URL` decides where the same code runs:
 
 | Target | `COMFY_BASE_URL` |
 |---|---|
@@ -43,5 +43,5 @@ Everything also runs on a single machine with a 24 GB GPU; clips and frames are 
 
 ## Style packs
 
-A style is a JSON file in `pagereel/styles/` (or `$PAGEREEL_STYLES`): `engine` (`image`, `cinematic`, `motion`), the prompt style,
+A style is a JSON file in `leafreel/styles/` (or `$LEAFREEL_STYLES`): `engine` (`image`, `cinematic`, `motion`), the prompt style,
 transition, camera, soundtrack tags and a voice description. Drop in a new file and it shows up in the UI and CLI.

@@ -21,5 +21,5 @@ TTS_HTTP_VOICE = os.environ.get("TTS_HTTP_VOICE", "af_heart")
 TTS_SSH = os.environ.get("TTS_SSH", "")
 TTS_PYTHON = os.environ.get("TTS_PYTHON", "python3")
 
-DATA_DIR = Path(os.environ.get("PAGEREEL_DATA", Path.home() / ".pagereel")).expanduser()
+DATA_DIR = Path(os.environ.get("LEAFREEL_DATA", Path.home() / ".leafreel")).expanduser()
 CHROMIUM = os.environ.get("CHROMIUM_PATH", "")  # for the code-rendered (motion graphics) styles

@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from . import config, styles, pipeline
 
 UI = Path(__file__).parent / "ui"
-app = FastAPI(title="PageReel")
+app = FastAPI(title="LeafReel")
 JOBS: dict[str, dict] = {}
 Q: "queue.Queue[str]" = queue.Queue()
 
@@ -79,7 +79,7 @@ async def events(jid: str):
 def video(jid: str):
     p = config.DATA_DIR / "runs" / jid / "video.mp4"
     if not p.exists(): raise HTTPException(404)
-    return FileResponse(p, media_type="video/mp4", filename=f"pagereel_{jid}.mp4")
+    return FileResponse(p, media_type="video/mp4", filename=f"leafreel_{jid}.mp4")
 
 @app.get("/api/jobs/{jid}/file/{name:path}")
 def job_file(jid: str, name: str):
