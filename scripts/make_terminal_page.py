@@ -4,7 +4,7 @@ Nothing is invented: prompts, tool calls, tool results and the final answer are 
 import json, re, sys, html
 from pathlib import Path
 root = Path(__file__).resolve().parent.parent; ev = json.loads((root / "demo/data/hermes_session.json").read_text())
-short = lambda s: re.sub(r"/[^\s\"]*?/leafreel_data/runs/", "…/runs/", re.sub(r"/home/maya/estudio/concurso-higgsfield/leafreel/", "", s))
+short = lambda s: re.sub(r"/[^\s\"]*?/leafreel_data/runs/", "…/runs/", re.sub(r"/[^\s\"]*?/(examples/)", r"\1", s))
 lines = []   # (kind, text, hold_seconds)
 for e in ev:
     k = e[0]
