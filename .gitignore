@@ -7,3 +7,4 @@ run_local.sh
 runs/
 *.log
 .env
+_site/

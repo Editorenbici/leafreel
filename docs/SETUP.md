@@ -6,7 +6,7 @@ an **OpenAI-compatible vision LLM**, a **narration backend**, and `ffmpeg`. Pyth
 ## 1. Install LeafReel
 
 ```bash
-git clone <this repo> && cd leafreel
+git clone https://github.com/Editorenbici/leafreel && cd leafreel
 python3 -m venv .venv && . .venv/bin/activate
 pip install -e .
 # only for the code-rendered styles (flat, chalkboard, kinetic):

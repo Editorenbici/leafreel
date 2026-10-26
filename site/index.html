@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LeafReel — drop a page, get a reel</title>
+<meta name="description" content="Turn any document into a narrated explainer video in eight visual styles, with open-weight models on ComfyUI (Comfy SDK). Two nodes, zero cloud.">
+<meta property="og:title" content="LeafReel — drop a page, get a reel"><meta property="og:description" content="Documents to narrated explainer videos in eight styles. Open weights, two nodes, zero cloud."><meta property="og:image" content="media/social-preview.png">
+<style>
+:root{--bg:#0d1020;--panel:#151a30;--line:#2a3158;--fg:#eef1ff;--muted:#9aa3cf;--acc:#ffb347;--acc2:#7c8cff;--ok:#3ee6a8}
+@media (prefers-color-scheme:light){:root{--bg:#f4f6ff;--panel:#fff;--line:#d9ddf5;--fg:#16193a;--muted:#5d648f;--acc:#e8820c;--acc2:#4f5fe0;--ok:#0f9d6b}}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(1100px 600px at 85% -10%,rgba(124,140,255,.22),transparent),radial-gradient(900px 500px at -10% 10%,rgba(255,179,71,.14),transparent),var(--bg);color:var(--fg);font:17px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 20px 70px}header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{display:flex;gap:12px;align-items:center;font-weight:800;font-size:26px}.logo i{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--acc),#ff6b8a);font-style:normal}
+nav a{color:var(--muted);text-decoration:none;margin-left:18px;font-size:15px}nav a:hover{color:var(--fg)}
+h1{font-size:clamp(34px,6vw,60px);line-height:1.05;letter-spacing:-1.5px;margin:34px 0 12px}h1 em{font-style:normal;background:linear-gradient(90deg,var(--acc),#ff6b8a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{color:var(--muted);font-size:20px;max-width:780px}.chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.chips span{border:1px solid var(--line);background:var(--panel);border-radius:99px;padding:5px 13px;font-size:13px;color:var(--muted)}
+video{width:100%;border-radius:16px;border:1px solid var(--line);background:#000;display:block}.hero{margin:26px 0 8px}
+h2{font-size:30px;letter-spacing:-.6px;margin:54px 0 8px}p.sub{color:var(--muted);margin:0 0 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}.card div{padding:12px 14px}.card b{display:block}.card small{color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:760px){.two{grid-template-columns:1fr}}.box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px}.box h3{margin:0 0 6px;font-size:19px}.box ul{margin:8px 0 0;padding-left:20px;color:var(--muted)}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;overflow:auto;font-size:14.5px;line-height:1.5}code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.btn{display:inline-block;margin:6px 10px 0 0;padding:11px 20px;border-radius:12px;background:linear-gradient(135deg,var(--acc),#ff6b8a);color:#1b1020;font-weight:800;text-decoration:none}.btn.alt{background:var(--panel);color:var(--fg);border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;font-size:15px}td,th{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left}th{color:var(--muted);font-weight:600}
+footer{margin-top:50px;color:var(--muted);font-size:14px}
+</style></head><body><div class="wrap">
+<header><div class="logo"><i>🎞️</i>LeafReel</div><nav><a href="#films">Films</a><a href="#nodes">Two nodes</a><a href="#agents">Agents</a><a href="#run">Run it</a><a href="https://github.com/Editorenbici/leafreel">GitHub</a></nav></header>
+<h1>Drop a page. <em>Get a reel.</em></h1>
+<p class="lead">LeafReel turns any document into a narrated explainer video in eight completely different visual styles — storybook watercolor, cut paper, pixel game, claymation, chalkboard, kinetic type, flat motion graphics and cinematic LTX clips. Script fact-checked against your text, every frame inspected by a vision model, everything on open weights through ComfyUI and the Comfy SDK.</p>
+<div class="chips"><span>100% open-weight models</span><span>Built on the Comfy SDK</span><span>Two nodes · zero cloud</span><span>Apache-2.0</span><span>Made for #OpenSourceHiggsfield</span></div>
+<div class="hero"><video controls preload="metadata" poster="media/demo-poster.jpg"><source src="media/leafreel_demo.mp4" type="video/mp4"></video></div>
+<a class="btn" href="https://github.com/Editorenbici/leafreel">Get the code</a><a class="btn alt" href="https://github.com/Editorenbici/leafreel/blob/main/docs/RECIPE.md">The two-node recipe</a>
+
+<h2 id="films">One document, eight films</h2><p class="sub">The same 400-word text (<code>examples/volcanoes.md</code>), rendered in each style. All made on one RTX 3090.</p>
+<div class="grid" id="gal"></div>
+
+<h2 id="nodes">A recipe, not a pile of parts</h2><p class="sub">Two machines, each doing what it is best at.</p>
+<div class="two"><div class="box"><h3>Node A — brain</h3><b>DGX Spark / GX10 · Qwen3.8 Flash Next</b><ul><li>writes and fact-checks the script</li><li>looks at <i>every</i> frame (vision QA)</li><li>app · ffmpeg · MCP server</li></ul></div>
+<div class="box"><h3>Node B — studio</h3><b>RTX 3090 · 24 GB</b><ul><li>ComfyUI behind the Comfy SDK</li><li>FLUX.2 klein · LTX-2.5 · ACE-Step</li><li>Qwen3-TTS designed voices (no cloning)</li></ul></div></div>
+<p class="sub" style="margin-top:16px"><code>leafreel doctor</code> checks both nodes, every model file and tells you which styles are ready; <code>scripts/check_open_weights.py</code> proves no workflow contains a partner/API node.</p>
+<table><tr><th>Style family</th><th>End-to-end (measured)</th></tr><tr><td>Code-rendered (flat, chalkboard, kinetic)</td><td>2.2–2.7 min</td></tr><tr><td>ComfyUI images (watercolor, papercut, pixel, clay)</td><td>4.6–5.7 min</td></tr><tr><td>Cinematic (FLUX frames → 10 LTX-2.5 clips with sound)</td><td>35 min</td></tr></table>
+
+<h2 id="agents">Agent-native</h2><p class="sub">An MCP server lets Hermes Agent, OpenClaw, pi, Claude Code… send a PDF from a chat and get the reel back. Verified with Hermes Agent driven by a local Qwen.</p>
+<pre><code>mcp_servers:
+  leafreel:
+    command: /path/to/leafreel/.venv/bin/leafreel-mcp
+    env: { COMFY_BASE_URL: "http://127.0.0.1:8189", LLM_BASE_URL: "http://127.0.0.1:8090/v1" }</code></pre>
+
+<h2 id="run">Run it</h2>
+<pre><code>git clone https://github.com/Editorenbici/leafreel &amp;&amp; cd leafreel
+python3 -m venv .venv &amp;&amp; . .venv/bin/activate &amp;&amp; pip install -e '.[agents]' &amp;&amp; scripts/setup_motion.sh
+leafreel doctor          # checks LLM + vision, Comfy SDK proxy, models, narration
+leafreel serve           # web app on http://127.0.0.1:8100
+leafreel make examples/volcanoes.md --style papercut --language Spanish</code></pre>
+<footer>LeafReel · Apache-2.0 · © 2026 Patricio Bustos (Editorenbici) · Model weights keep their own licenses — see <a href="https://github.com/Editorenbici/leafreel/blob/main/docs/MODELS.md">docs/MODELS.md</a>.</footer>
+</div>
+<script>
+const films=[["watercolor","Storybook watercolor","Hand-painted, one character locked across 12 scenes"],["papercut","Cut-paper collage","Layered cardstock with soft shadows"],["pixel","16-bit pixel game","True pixel grid, stepped camera pans"],["clay","Claymation","Everything modelled in colored clay"],["cinematic","Cinematic (LTX-2.5)","Photoreal shots turned into clips with sound"],["chalkboard","Chalkboard","Rendered from code, hand-drawn look"],["kinetic","Kinetic typography","Words fly in on the narration"],["flat","Flat motion graphics","Vector cards, steps and charts"],["chalkboard_es","Spanish narration","Same pipeline, --language Spanish"]];
+document.getElementById('gal').innerHTML=films.map(([id,t,s])=>`<div class="card"><video controls preload="none" poster="media/${id}.jpg" src="media/volcanoes_${id}.mp4"></video><div><b>${t}</b><small>${s}</small></div></div>`).join('');
+</script></body></html>

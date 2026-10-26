@@ -36,8 +36,8 @@ LAYOUT = [  # (kind, first narration line, last line, source, badge shown top-le
 vids, auds = [], []
 starts = []; clock = 0.0
 for n, (kind, i, j, src, badge) in enumerate(LAYOUT):
-    a, b = span(i, j); D = b - a; v = tmp / f"v{n}.mp4"; w = tmp / f"a{n}.wav"
-    sh("ffmpeg", "-y", "-loglevel", "error", "-ss", f"{a:.3f}", "-t", f"{D:.3f}", "-i", str(nar / "narration.wav"), "-ar", "48000", "-ac", "1", str(w))
+    a, b = span(i, j); D = b - a + (2.5 if kind == "grid" else 0.0); v = tmp / f"v{n}.mp4"; w = tmp / f"a{n}.wav"
+    sh("ffmpeg", "-y", "-loglevel", "error", "-ss", f"{a:.3f}", "-i", str(nar / "narration.wav"), "-af", f"atrim=0:{b - a:.3f},apad=whole_dur={D:.3f}", "-ar", "48000", "-ac", "1", str(w))
     if kind == "card":
         sh("ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-i", str(src), "-vf", f"scale=1280:720,fps={FPS},format=yuv420p,fade=t=in:d=0.4", "-t", f"{D:.3f}", "-c:v", "libx264", "-crf", "18", str(v))
     elif kind == "rec":

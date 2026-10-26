@@ -4,7 +4,9 @@
 
 Paste text or drop a PDF, pick a look (storybook watercolor, cut-paper collage, 16-bit pixel game, claymation, cinematic LTX clips, flat motion graphics, chalkboard, kinetic typography), press one button. Minutes later you get a ~1 minute reel with designed voice, music and subtitles — plus a **quality report** that proves what was checked.
 
-> Built for the [Open Source Higgsfield](https://comfy.org/open-source-higgsfield) challenge. Category: **Open Weights Only** (no partner nodes, no paid APIs).
+> **[Live page and demo](https://editorenbici.github.io/leafreel/)** · Built for the [Open Source Higgsfield](https://comfy.org/open-source-higgsfield) challenge. Category: **Open Weights Only** (no partner nodes, no paid APIs).
+
+<p align="center"><a href="demo/leafreel_demo.mp4"><img src="docs/img/demo.gif" alt="LeafReel demo: a real run on two nodes" width="720"></a><br><sub>A real run, timelapsed. <a href="demo/leafreel_demo.mp4">Watch the 80-second demo</a> · <a href="https://editorenbici.github.io/leafreel/">live page with all the example films</a></sub></p>
 
 <p align="center"><img src="docs/img/app.png" alt="LeafReel web app" width="860"></p>
 
